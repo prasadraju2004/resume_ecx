@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ name }}'s Resume</title>
+    <style>
+        /* --- Base Styles --- */
+        body {
+            font-family: Arial, sans-serif; /* Fallback */
+            line-height: 1.4; /* Adjust for readability */
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1.page-title {
+             text-align: center; color: #333; border-bottom: none; margin-bottom: 20px; font-size: 1.5em;
+        }
+
+        /* --- Venti Resume Styling (#resume-output) --- */
+        #resume-output {
+            padding: 40px;
+            background: white;
+            font-family: 'Times New Roman', Times, serif; /* Venti uses Serif */
+            color: black;
+            max-width: 8.5in;
+            min-height: 10.5in; /* Allow content to determine height */
+            margin: 0 auto; /* Center the resume area */
+            box-sizing: border-box;
+            text-align: left;
+            border: none; /* Venti has no outer border */
+        }
+
+        /* Header */
+        #resume-output .header-name {
+            text-align: center;
+            margin: 0 0 5px 0;
+            font-size: 2.2em;
+            font-weight: bold;
+        }
+        #resume-output .contact-info {
+            text-align: center;
+            font-size: 0.95em; /* Slightly larger than default */
+            margin-bottom: 30px; /* More space after contact */
+            color: #000; /* Venti contact is black */
+        }
+        #resume-output .contact-info span {
+            margin: 0 4px; /* Tighter spacing */
+            white-space: nowrap;
+        }
+        #resume-output .contact-info span::after {
+            content: "|";
+            margin-left: 8px; /* Adjust spacing */
+            margin-right: 4px;
+            color: #000; /* Venti separator is black */
+            font-weight: normal;
+        }
+        #resume-output .contact-info span:last-child::after {
+            content: ""; margin-left: 0;
+        }
+        #resume-output .contact-info a { color: #000; text-decoration: none; }
+
+        /* Section Title */
+        #resume-output h2.section-title {
+            font-size: 1.0em; /* Venti titles are smaller */
+            font-weight: bold;
+            text-transform: uppercase;
+            border-bottom: 1.5px solid #000; /* Venti solid underline */
+            padding-bottom: 1px;
+            margin-top: 20px;
+            margin-bottom: 12px;
+            page-break-after: avoid;
+            text-align: center; /* Venti titles centered */
+            letter-spacing: 1px; /* Slight letter spacing */
+        }
+
+        #resume-output .section-content {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        #resume-output .entry-item {
+            margin-bottom: 15px; /* Venti has good spacing */
+            page-break-inside: avoid;
+            clear: both; /* Ensure entries don't wrap strangely */
+            overflow: hidden; /* Contain floats */
+        }
+
+        /* Education Section (Venti Style) */
+        #resume-output .education-entry .entry-heading {
+            font-size: 1.0em; /* Standard size */
+            margin-bottom: 2px;
+            overflow: hidden; /* Clear float */
+        }
+        #resume-output .education-entry .entry-heading .institution-location {
+            float: left;
+            font-weight: bold;
+        }
+        #resume-output .education-entry .entry-heading .dates {
+            float: right;
+            font-weight: bold;
+        }
+        #resume-output .education-entry .degree {
+            font-weight: bold; /* Venti degree is bold */
+            font-size: 1.0em;
+            clear: both; /* Ensure below heading */
+            margin-bottom: 1px;
+        }
+        #resume-output .education-entry .details { /* GPA, Minor etc. */
+            font-size: 1.0em;
+            margin: 1px 0 0 0;
+             color: #333;
+        }
+
+        /* Technical Skills (Venti Heading, Simple List Content) */
+        #resume-output .skills-section ul {
+            list-style: none; padding: 0; margin: 5px 0 0 0; font-size: 1.0em; line-height: 1.5;
+        }
+        #resume-output .skills-section li { display: inline; }
+        #resume-output .skills-section li:not(:last-child)::after { content: ", "; }
+
+        /* Experience Section (Venti Style) */
+        #resume-output .experience-entry .entry-heading {
+            font-size: 1.0em;
+            margin-bottom: 1px;
+            overflow: hidden; /* Clear float */
+        }
+         #resume-output .experience-entry .entry-heading .company-location {
+             float: left;
+             font-weight: bold; /* Venti company is bold */
+         }
+         #resume-output .experience-entry .entry-heading .dates {
+             float: right;
+             font-weight: bold; /* Venti dates are bold */
+         }
+        #resume-output .experience-entry .title {
+            font-style: italic;
+            font-size: 1.0em;
+            clear: both; /* Below heading */
+            margin-bottom: 4px;
+            display: block; /* Ensure it takes full width */
+        }
+        #resume-output .experience-entry .description {
+            margin-left: 18px; /* Venti bullet indent */
+            padding-left: 0;
+            list-style: disc;
+            font-size: 1.0em;
+            line-height: 1.4;
+            margin-top: 3px; /* Space before bullets */
+        }
+        #resume-output .experience-entry .description li {
+            margin-bottom: 3px;
+            padding-left: 5px; /* Space after bullet */
+        }
+
+        /* Interests Section (Venti Style) */
+        #resume-output .interests-section ul {
+            list-style: none; padding: 0; margin: 5px 0 0 0; font-size: 1.0em; line-height: 1.5;
+        }
+        #resume-output .interests-section li { display: inline; }
+        #resume-output .interests-section li:not(:last-child)::after { content: ", "; }
+
+        /* Generic Styling for Sections NOT in Venti */
+        #resume-output .generic-entry .entry-heading { font-weight: bold; margin-bottom: 2px; font-size: 1.0em; overflow: hidden; }
+        #resume-output .generic-entry .entry-heading .left { float: left; }
+        #resume-output .generic-entry .entry-heading .right { float: right; font-weight: normal;}
+        #resume-output .generic-entry .sub-heading { font-style: italic; color: #555; font-size: 0.95em; margin-bottom: 4px; clear:both; }
+        #resume-output .generic-entry .description { margin-left: 15px; padding-left: 0; list-style: disc; font-size: 1em; line-height: 1.4; margin-top: 5px;}
+        #resume-output .generic-entry .description li { margin-bottom: 3px; }
+        #resume-output .generic-list ul { list-style: none; padding: 0; margin: 5px 0 0 0; font-size: 1.0em; line-height: 1.5; }
+        #resume-output .generic-list li { display: inline; }
+        #resume-output .generic-list li:not(:last-child)::after { content: ", "; }
+        #resume-output .summary-text p { margin: 5px 0; font-size: 1em; text-align: left; }
+
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+
+        <div id="resume-output">
+
+            <!-- Header -->
+
+            <div class="header-name">{{ name }}</div>
+
+            <div class="contact-info">
+
+                {% if location %}<span>{{ location }}</span>{% endif %}
+
+                {% if phone %}<span>{{ phone }}</span>{% endif %}
+
+                {% if email %}<span><a href="mailto:{{ email }}">{{ email }}</a></span>{% endif %}
+
+                {% if linkedin %}<span><a href="{{ linkedin }}" target="_blank">LinkedIn</a></span>{% endif %}
+
+                {% if github %}<span><a href="{{ github }}" target="_blank">GitHub</a></span>{% endif %}
+
+                {% if portfolio %}<span><a href="{{ portfolio }}" target="_blank">Portfolio</a></span>{% endif %}
+
+            </div>
+
+
+            <!-- Summary -->
+
+            {% if summary %}
+
+            <h2 class="section-title">Summary</h2>
+
+            <div class="section-content summary-text">
+
+                <p>{{ summary | replace('\n', '<br>') | safe }}</p>
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- Education -->
+
+            {% if education and education|length > 0 %}
+
+            <h2 class="section-title">Education</h2>
+
+            <div class="section-content">
+
+                {% for edu in education %}
+
+                <div class="entry-item education-entry">
+
+                    <div class="entry-heading">
+
+                        <span class="institution-location">
+
+                            {{ edu.institute_name }}{% if edu.location %}, {{ edu.location }}{% endif %}
+
+                        </span>
+
+                        <span class="dates">{{ edu.year }}</span>
+
+                    </div>
+
+                    <div class="degree">{{ edu.qualification }} {{ edu.specialization }}</div>
+
+                    {% if edu.details %}
+
+                    <div class="details">{{ edu.details }}</div>
+
+                    {% endif %}
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- Technical Skills -->
+
+            {% if skills %}
+
+            <h2 class="section-title">Technical Skills</h2>
+
+            <div class="section-content skills-section">
+
+                <ul>
+
+                    {% for skill in skills.split(',') %}
+
+                    {% set trimmed_skill = skill.strip() %}
+
+                    {% if trimmed_skill %}
+
+                    <li>{{ trimmed_skill }}</li>
+
+                    {% endif %}
+
+                    {% endfor %}
+
+                </ul>
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- Experience -->
+
+            {% if experience and experience|length > 0 %}
+
+            <h2 class="section-title">Experience</h2>
+
+            <div class="section-content">
+
+                {% for exp in experience %}
+
+                <div class="entry-item experience-entry">
+
+                    <div class="entry-heading">
+
+                        <span class="company-location">
+
+                            <strong>{{ exp.company }}</strong> – {{ exp.location }}
+
+                        </span>
+
+                        <span class="dates">{{ exp.year }}</span>
+
+                    </div>
+
+                    {% if exp.title %}
+
+                    <div class="title">{{ exp.title }}</div>
+
+                    {% endif %}
+
+                    {% if exp.description %}
+
+                    <ul class="description">
+
+                        <li>{{ exp.description }}</li>
+
+                    </ul>
+
+                    {% endif %}
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- Projects -->
+
+            {% if projects and projects|length > 0 %}
+
+            <h2 class="section-title">Projects</h2>
+
+            <div class="section-content">
+
+                {% for proj in projects %}
+
+                <div class="entry-item generic-entry">
+
+                    <div class="entry-heading">
+
+                        <span class="left">
+
+                            {% if proj.link %}<a href="{{ proj.link }}" target="_blank" style="color:black; text-decoration:none;">{% endif %}
+
+                            {{ proj.project_name }}
+
+                            {% if proj.link %}</a>{% endif %}
+
+                            {% if proj.tech and proj.tech|length > 0 %}
+
+                            <span style="font-weight:normal; font-style:italic; font-size:0.9em;">({{ proj.tech|join(', ') }})</span>
+
+                            {% endif %}
+
+                        </span>
+
+                    </div>
+
+                    {% if proj.title %}
+
+                    <div class="sub-heading">{{ proj.title }}</div>
+
+                    {% endif %}
+
+                    {% if proj.description %}
+
+                    <ul class="description">
+
+                        <li>{{ proj.description }}</li>
+
+                    </ul>
+
+                    {% endif %}
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- Languages -->
+
+            {% if languages %}
+
+            <h2 class="section-title">Languages</h2>
+
+            <div class="section-content generic-list">
+
+                <ul>
+
+                    {% for lang in languages.split(',') %}
+
+                    {% set trimmed_lang = lang.strip() %}
+
+                    {% if trimmed_lang %}
+
+                    <li>{{ trimmed_lang }}</li>
+
+                    {% endif %}
+
+                    {% endfor %}
+
+                </ul>
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- Interests -->
+
+            {% if interests %}
+
+            <h2 class="section-title">Interests</h2>
+
+            <div class="section-content interests-section">
+
+                <ul>
+
+                    {% for interest in interests.split(',') %}
+
+                    {% set trimmed_interest = interest.strip() %}
+
+                    {% if trimmed_interest %}
+
+                    <li>{{ trimmed_interest }}</li>
+
+                    {% endif %}
+
+                    {% endfor %}
+
+                </ul>
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- Awards -->
+
+            {% if awards and awards|length > 0 %}
+
+            <h2 class="section-title">Awards & Honors</h2>
+
+            <div class="section-content">
+
+                {% for award in awards %}
+
+                <div class="entry-item generic-entry">
+
+                    <div class="entry-heading">
+
+                        <span class="left">{{ award.title }}</span>
+
+                        <span class="right">{{ award.year }}</span>
+
+                    </div>
+
+                    {% if award.issuer %}
+
+                    <div class="sub-heading">{{ award.issuer }}</div>
+
+                    {% endif %}
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+            {% endif %}
+
+
+        </div>
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if name %}{{ name }}{% else %}Resume{% endif %}</title>
+    <style>
+        /* Base Styles */
+        body, h1, h2, p, ul, li, dl, dt, dd { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, Helvetica, sans-serif; line-height: 1.35; margin: 0; padding: 0;
+            background-color: #fff; color: #333; font-size: 10pt;
+        }
+        .resume-container { max-width: 7.5in; min-height: 10in; margin: 0 auto; padding: 0.7in 0.8in; }
+
+        /* Header */
+        .header-name { text-align: center; font-size: 1.6em; font-weight: bold; margin-bottom: 4px; color: #000; }
+        .header-contact { text-align: center; font-size: 0.9em; margin-bottom: 20px; color: #333; word-wrap: break-word; } /* Allow wrapping */
+        .header-contact span { margin: 0 3px; white-space: nowrap; }
+        .header-contact .separator { margin-left: 3px; margin-right: 6px; color: #555; }
+        .header-contact a { color: inherit; text-decoration: none; }
+        .header-contact a:hover { text-decoration: underline; }
+
+        /* Section Title */
+        .section-title { font-size: 1.0em; font-weight: bold; border-bottom: 0.8px solid #000; padding-bottom: 1px; margin-top: 14px; margin-bottom: 10px; page-break-after: avoid; color: #000; }
+
+        /* Summary Section */
+        .summary-text { font-size: 1.0em; margin-bottom: 10px; line-height: 1.4; color: #222; }
+
+        /* Two-Column Layout Base (for Edu/Exp/Proj) */
+        .two-col-section .entry-item { display: flex; align-items: flex-start; margin-bottom: 14px; page-break-inside: avoid; }
+        .two-col-section .left-col { flex: 0 0 1.1in; padding-right: 10px; font-size: 0.95em; color: #333; line-height: 1.3; }
+        .two-col-section .right-col { flex: 1; }
+
+        /* Education Specific */
+        .edu-right-col-content { display: flex; justify-content: space-between; align-items: flex-start; }
+        .edu-right-col-left { flex: 1; padding-right: 10px; }
+        .edu-right-col-right { flex: 0 0 45%; text-align: left; }
+        .edu-institution { font-weight: bold; font-size: 1.0em; color: #000; display: block; }
+        .edu-location { font-size: 0.95em; display: block; margin-top: 1px; }
+        .edu-degree { font-size: 0.95em; display: block; margin-top: 0px; font-weight: normal; }
+        .edu-details { font-size: 0.9em; display: block; margin-top: 2px; color: #444; }
+
+        /* Experience / Project Specific */
+        .item-line-1 { display: flex; justify-content: space-between; align-items: flex-start; } /* Company/Proj Name + Location/Link line */
+        .item-name { font-weight: bold; font-size: 1.0em; color: #000; } /* Company or Project Name */
+        .item-location { font-size: 1.0em; text-align: right; color: #111; flex-shrink: 0; padding-left: 10px;} /* Location or Link placeholder */
+        .item-location a { font-size: 0.9em; color: #444; text-decoration: none; }
+        .item-location a:hover { text-decoration: underline; }
+        .item-title { font-style: italic; font-size: 1.0em; display: block; margin-top: 1px; margin-bottom: 4px; color: #111; } /* Job Title or Project Tech */
+        .item-bullets { list-style: disc; margin-left: 18px; padding-left: 0; font-size: 0.95em; color: #222; }
+        .item-bullets li { margin-bottom: 3px; line-height: 1.3; }
+        .item-description-paragraph { font-size: 0.95em; color: #222; margin-top: 3px; line-height: 1.3; }
+
+        /* Simple String Sections (Skills, Languages, Interests) */
+        .string-section .section-content { font-size: 0.95em; color: #222; line-height: 1.4; }
+
+        /* Additional Information Section */
+        .additional-info .info-item { display: flex; align-items: flex-start; margin-bottom: 6px; line-height: 1.3; page-break-inside: avoid; }
+        .additional-info .info-label { flex: 0 0 1.1in; padding-right: 10px; font-weight: bold; font-size: 1.0em; color: #000; }
+        .additional-info .info-value { flex: 1; font-size: 0.95em; color: #222; }
+        .additional-info .info-value p { margin: 0; padding: 0; line-height: 1.3; margin-bottom: 1px; } /* For achievement lines */
+
+    </style>
+</head>
+<body>
+
+    <div class="resume-container">
+
+        <!-- Header -->
+
+        {% if name %}<div class="header-name">{{ name }}</div>{% endif %}
+
+        <div class="header-contact">
+
+            {% set contact_items = [] %}
+
+            {% if email %}        {% set _ = contact_items.append('e-mail: ' ~ email) %}{% endif %}
+
+            {% if phone %}        {% set _ = contact_items.append('tel: ' ~ phone) %}{% endif %}
+
+            {% if linkedin %}     {% set _ = contact_items.append('<a href="' ~ linkedin ~ '" target="_blank">LinkedIn</a>') %}{% endif %}
+
+            {% if github %}       {% set _ = contact_items.append('<a href="' ~ github ~ '" target="_blank">GitHub</a>') %}{% endif %}
+
+            {% if portfolio %}    {% set _ = contact_items.append('<a href="' ~ portfolio ~ '" target="_blank">Portfolio</a>') %}{% endif %}
+
+            {% for item in contact_items %}
+
+                <span>{{ item | safe }}</span>{% if not loop.last %}<span class="separator">|</span>{% endif %}
+
+            {% endfor %}
+
+        </div>
+
+
+        <!-- Summary -->
+
+        {% if summary %}
+
+        <div class="section-title">SUMMARY</div>
+
+        <div class="section-content summary-text">
+
+            <p>{{ summary | replace('\n', '<br>') | safe }}</p>
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- Education -->
+
+        {% if education and education|length > 0 %}
+
+        <div class="section-title">Education and Qualifications</div>
+
+        <div class="section-content two-col-section">
+
+            {% for edu in education %}
+
+            <div class="entry-item">
+
+                <div class="left-col">{{ edu.year }}</div>
+
+                <div class="right-col">
+
+                    <div class="edu-right-col-content">
+
+                        <div class="edu-right-col-left">
+
+                            <span class="edu-institution">{{ edu.institute_name }}</span>
+
+                            {% if edu.location %}<span class="edu-location">{{ edu.location }}</span>{% endif %}
+
+                        </div>
+
+                        <div class="edu-right-col-right">
+
+                            <span class="edu-degree">{{ edu.qualification }} {{ edu.specialization }}</span>
+
+                            {% if edu.details %}<span class="edu-details">{{ edu.details }}</span>{% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- Experience -->
+
+        {% if experience and experience|length > 0 %}
+
+        <div class="section-title">Work Experience</div>
+
+        <div class="section-content two-col-section">
+
+            {% for exp in experience %}
+
+            <div class="entry-item">
+
+                <div class="left-col">{{ exp.year }}</div>
+
+                <div class="right-col">
+
+                    <div class="item-line-1">
+
+                        <span class="item-name">{{ exp.company }}</span>
+
+                        {% if exp.location %}<span class="item-location">{{ exp.location }}</span>{% endif %}
+
+                    </div>
+
+                    {% if exp.title %}<span class="item-title">{{ exp.title }}</span>{% endif %}
+
+                    {% if exp.description %}
+
+                    <ul class="item-bullets">
+
+                        <li>{{ exp.description }}</li>
+
+                    </ul>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- Projects -->
+
+        {% if projects and projects|length > 0 %}
+
+        <div class="section-title">PROJECTS</div>
+
+        <div class="section-content two-col-section">
+
+            {% for proj in projects %}
+
+            <div class="entry-item">
+
+                <div class="left-col"></div>
+
+                <div class="right-col">
+
+                    <div class="item-line-1">
+
+                        <span class="item-name">{{ proj.project_name }}</span>
+
+                        {% if proj.link %}<span class="item-location"><a href="{{ proj.link }}" target="_blank">[Link]</a></span>{% endif %}
+
+                    </div>
+
+                    {% if proj.title %}<span class="item-title">{{ proj.title }}</span>{% endif %}
+
+                    {% if proj.tech and proj.tech|length > 0 %}
+
+                    <span class="item-title">Technologies: {{ proj.tech|join(', ') }}</span>
+
+                    {% endif %}
+
+                    {% if proj.description %}
+
+                    <ul class="item-bullets">
+
+                        <li>{{ proj.description }}</li>
+
+                    </ul>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- Skills -->
+
+        {% if skills %}
+
+        <div class="section-title">SKILLS</div>
+
+        <div class="section-content string-section">
+
+            <p>{{ skills }}</p>
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- Additional Information -->
+
+        {% if interests or awards or languages %}
+
+        <div class="section-title">Additional Information</div>
+
+        <div class="section-content additional-info">
+
+            {% if interests %}
+
+            <div class="info-item">
+
+                <div class="info-label">Interests:</div>
+
+                <div class="info-value">{{ interests }}</div>
+
+            </div>
+
+            {% endif %}
+
+
+            {% if awards %}
+
+            <div class="info-item">
+
+                <div class="info-label">Achievements:</div>
+
+                <div class="info-value">
+
+                    {% for award in awards %}
+
+                    <p>{{ award.title }}{% if award.issuer %} - {{ award.issuer }}{% endif %}{% if award.year %} ({{ award.year }}){% endif %}</p>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+            {% endif %}
+
+
+            {% if languages %}
+
+            <div class="info-item">
+
+                <div class="info-label">Languages:</div>
+
+                <div class="info-value">{{ languages }}</div>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+        {% endif %}
+
+
+    </div>
+
+</body>
+</html>
