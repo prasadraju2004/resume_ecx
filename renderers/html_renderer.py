@@ -1,23 +1,19 @@
 from flask import render_template, Response
 
-
-RESUME_TEMPLATE = 'harvard.html'
-
-def render_html_resume(mongo):
-    # Fetch user details for the user named "Raju"
-    user = mongo.db.users.find_one({"username": "Raju"})
+def render_html_resume(mongo, username="Raju", template="harvard.html"):
+    # Fetch user by username
+    user = mongo.db.users.find_one({"username": username})
     
     if not user:
-        return "User not found", 404
+        return f"User '{username}' not found", 404
 
-    # Fetch user details, education, experience, projects, awards, etc.
+    # Fetch user details
     user_details = mongo.db.user_details.find_one({"user_id": user['_id']})
     education = list(mongo.db.education.find({"user_id": user['_id']}))
     experience = list(mongo.db.experience.find({"user_id": user['_id']}))
     projects = list(mongo.db.projects.find({"user_id": user['_id']}))
     awards = list(mongo.db.awards.find({"user_id": user['_id']}))
 
-    # Prepare the context for rendering the template
     context = {
         "name": user['username'],
         "location": user_details.get('location', ''),
@@ -36,4 +32,4 @@ def render_html_resume(mongo):
         "awards": awards,
     }
 
-    return render_template(RESUME_TEMPLATE, **context)
+    return render_template(template, **context)
