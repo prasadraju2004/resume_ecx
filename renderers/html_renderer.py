@@ -1,7 +1,7 @@
 from flask import render_template, Response
 
 
-RESUME_TEMPLATE = '.html'
+RESUME_TEMPLATE = 'harvard.html'
 
 def render_html_resume(mongo):
     # Fetch user details for the user named "Raju"
