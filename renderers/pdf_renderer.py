@@ -3,45 +3,46 @@ import logging
 import pdfkit
 import json
 import os
+import platform
 
 logger = logging.getLogger(__name__)
 RESUME_TEMPLATE = 'resume2.html'
 
-path_wkhtmltopdf = r'D:\software installations data\wkhtmltopdf\bin\wkhtmltopdf.exe'
+# Determine wkhtmltopdf path based on OS
+if platform.system() == 'Windows':
+    # Local development path (adjust if needed)
+    path_wkhtmltopdf = r'D:\software installations data\wkhtmltopdf\bin\wkhtmltopdf.exe'
+else:
+    # Assume the binary is included in the "bin" directory of the project (Render deployment)
+    path_wkhtmltopdf = os.path.join(os.getcwd(), 'bin', 'wkhtmltopdf')
 
-# Check if the specified path exists
+# Configure pdfkit
 if not os.path.exists(path_wkhtmltopdf):
-    print(f"ERROR: wkhtmltopdf executable not found at the specified path: {path_wkhtmltopdf}")
-    print("Please verify the path and ensure wkhtmltopdf is installed correctly.")
+    print(f"ERROR: wkhtmltopdf executable not found at: {path_wkhtmltopdf}")
     config = None
 else:
-    print(f"Configuring pdfkit to use wkhtmltopdf at: {path_wkhtmltopdf}")
+    print(f"Using wkhtmltopdf at: {path_wkhtmltopdf}")
     config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
 
 def download_pdf_resume(mongo):
     """Generates and serves the resume as a PDF file using pdfkit."""
 
     if config is None:
-         # Handle the case where the path was invalid during startup
-         return ("<h1>Configuration Error</h1>"
-                 "<p>wkhtmltopdf path configured in app.py does not exist or is incorrect."
-                 "Please verify the path.</p>"), 500
+        return ("<h1>Configuration Error</h1>"
+                "<p>wkhtmltopdf path configured does not exist or is incorrect.</p>"), 500
 
     try:
-        # Fetch user details for the user named "Raju"
+        # Fetch user data
         user = mongo.db.users.find_one({"username": "Raju"})
-        
         if not user:
             return "User not found", 404
 
-        # Fetch user details, education, experience, projects, awards, etc.
         user_details = mongo.db.user_details.find_one({"user_id": user['_id']})
         education = list(mongo.db.education.find({"user_id": user['_id']}))
         experience = list(mongo.db.experience.find({"user_id": user['_id']}))
         projects = list(mongo.db.projects.find({"user_id": user['_id']}))
         awards = list(mongo.db.awards.find({"user_id": user['_id']}))
 
-        # Prepare the context for rendering the template
         context = {
             "name": user['username'],
             "location": user_details.get('location', ''),
@@ -60,9 +61,10 @@ def download_pdf_resume(mongo):
             "awards": awards,
         }
 
-        # Generate the HTML string for the PDF
+        # Render HTML from template
         html_string = render_template(RESUME_TEMPLATE, **context)
 
+        # PDF generation options
         options = {
             'page-size': 'Letter',
             'margin-top': '0.5in',
@@ -74,27 +76,23 @@ def download_pdf_resume(mongo):
             'no-outline': None
         }
 
-        # Generate PDF bytes using the configured path
+        # Generate PDF bytes
         pdf_bytes = pdfkit.from_string(
             html_string,
-            output_path=False,  # Return bytes
+            output_path=False,
             options=options,
-            configuration=config  # Use the specific configuration
+            configuration=config
         )
 
         response = Response(pdf_bytes)
         response.headers['Content-Type'] = 'application/pdf'
-        filename = "resume.pdf"  # Default filename
-        response.headers['Content-Disposition'] = f'attachment; filename="{filename}"'
+        response.headers['Content-Disposition'] = 'attachment; filename="resume.pdf"'
 
         return response
 
     except FileNotFoundError as e:
-        logger.error(f"Error executing wkhtmltopdf (check path/permissions): {e}")
-        return ("<h1>Error Generating PDF: Execution Failed</h1>"
-                "<p>Could not execute wkhtmltopdf found at the configured path. "
-                "Please check file permissions and ensure the path is correct.</p>"
-                f"<p>Path used: {path_wkhtmltopdf}</p>"), 500
+        logger.error(f"wkhtmltopdf execution error: {e}")
+        return (f"<h1>Error Generating PDF</h1><p>{str(e)}</p>"), 500
     except Exception as e:
-        logger.error(f"Error generating PDF with pdfkit: {e}")
-        return f"<h1>Error Generating PDF</h1><p>An unexpected error occurred. Error: {e}</p>", 500
+        logger.error(f"Unexpected PDF generation error: {e}")
+        return (f"<h1>Error Generating PDF</h1><p>{str(e)}</p>"), 500

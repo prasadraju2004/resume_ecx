@@ -1,4 +1,4 @@
-from flask import Flask, Response, render_template
+from flask import Flask, Response, render_template,request
 import json
 import os
 import pdfkit
@@ -21,9 +21,9 @@ RESUME_TEMPLATE = 'resume2.html'
 def hello_world():
     return '''
         <h1>Resume Generator</h1>
-        <p><a href="/render">View Resume HTML</a></p>
+        <p><a href="/render?username=Raju&template=harvard.html">View Resume HTML</a></p>
         <p><a href="/download-pdf">Download Resume as PDF (using pdfkit)</a></p>
-        <p><a href="/cv_render">View CV in HTML</a></p>
+        <p><a href="/cv_render?username=Raju&template=college_template_1.html">View CV in HTML</a></p>
     '''
 
 #we have 3 api endpoints now 1.) render resume, 2.) download pdf, 3.) cv render
@@ -34,7 +34,9 @@ def hello_world():
 
 @app.route('/render')
 def render_resume():
-    return render_html_resume(mongo)
+    username = request.args.get('username', 'Raju')  # default 'Raju'
+    template = request.args.get('template', 'harvard.html')  # default 'harvard.html'
+    return render_html_resume(mongo, username=username, template=template)
 
 @app.route('/download-pdf')
 def download_resume():
@@ -42,8 +44,11 @@ def download_resume():
 
 @app.route('/cv_render')
 def render_CV():
-    return cv_render(mongo)
+    username = request.args.get('username', 'Raju')  # default 'Raju'
+    template = request.args.get('template', 'college_template_1.html')  # default 'college_template_1.html'
+    return cv_render(mongo, username=username, template=template)
+
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()

@@ -1,8 +1,6 @@
 from flask import render_template, Response
 
-RESUME_TEMPLATE = 'college_template_1.html'
-
-def cv_render(mongo, username="Raju"):
+def cv_render(mongo, username="Raju", template="college_template_1.html"):
     # Fetch user by username
     user = mongo.db.users.find_one({"username": username})
     if not user:
@@ -10,14 +8,12 @@ def cv_render(mongo, username="Raju"):
 
     user_id = user['_id']
 
-    # Fetch associated collections
     user_details = mongo.db.user_details.find_one({"user_id": user_id})
     education = list(mongo.db.education.find({"user_id": user_id}))
     experience = list(mongo.db.experience.find({"user_id": user_id}))
     projects = list(mongo.db.projects.find({"user_id": user_id}))
     awards = list(mongo.db.awards.find({"user_id": user_id}))
-    
-    # New Academic CV-specific collections
+
     research_experience = list(mongo.db.research_experience.find({"user_id": user_id}))
     teaching_experience = list(mongo.db.teaching_experience.find({"user_id": user_id}))
     grants = list(mongo.db.grants.find({"user_id": user_id}))
@@ -26,7 +22,6 @@ def cv_render(mongo, username="Raju"):
     publications = list(mongo.db.publications.find({"user_id": user_id}))
     references = list(mongo.db.references.find({"user_id": user_id}))
 
-    # Prepare data for template rendering
     context = {
         "name": user['username'],
         "email": user.get('mail', ''),
@@ -58,4 +53,4 @@ def cv_render(mongo, username="Raju"):
         "references": references,
     }
 
-    return render_template(RESUME_TEMPLATE, **context)
+    return render_template(template, **context)
