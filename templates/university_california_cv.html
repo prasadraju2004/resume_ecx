@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CV - {{ name | default('Curriculum Vitae') }}</title>
+    <style>
+        body {
+            font-family: "Times New Roman", Times, serif; /* Standard academic font */
+            font-size: 11pt;
+            line-height: 1.4;
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
+            color: #000;
+        }
+        .cv-container {
+            max-width: 7.5in; /* Allow for standard margins */
+            margin: 1in auto;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .cv-header-title {
+            text-align: center;
+            font-size: 11pt;
+            margin-bottom: 5px;
+        }
+        .cv-header-main {
+             text-align: center;
+             font-weight: bold;
+             text-transform: uppercase;
+             font-size: 12pt;
+             margin-bottom: 5px;
+             letter-spacing: 1px;
+        }
+         .cv-header-prepared {
+             text-align: right;
+             font-size: 10pt;
+             margin-bottom: 20px;
+         }
+
+        .cv-section {
+            margin-bottom: 15px;
+            page-break-inside: avoid;
+        }
+
+        .cv-section-title {
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 11pt;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            padding-bottom: 2px;
+            /* border-bottom: 1px solid #eee; */ /* Optional light border */
+            page-break-after: avoid;
+            letter-spacing: 0.5px;
+        }
+         .cv-subsection-title {
+            font-weight: normal;
+            text-transform: uppercase;
+            font-size: 10.5pt;
+            margin-top: 10px;
+            margin-bottom: 8px;
+            margin-left: 15px;
+            letter-spacing: 0.5px;
+         }
+
+        .contact-info dt {
+            float: left;
+            clear: left;
+            width: 80px; /* Adjust as needed */
+            font-weight: normal;
+            text-align: right;
+            padding-right: 10px;
+        }
+        .contact-info dd {
+            margin-left: 90px; /* Should be >= dt width + padding */
+            margin-bottom: 3px;
+            padding-left: 0;
+        }
+        .contact-info a { color: inherit; text-decoration: none; }
+        .contact-info a:hover { text-decoration: underline; }
+
+
+        .list-entry {
+            display: flex;
+            margin-bottom: 4px;
+            padding-left: 15px; /* Indent entries */
+        }
+        .list-entry-dates {
+            flex: 0 0 100px; /* Fixed width for dates, adjust as needed */
+            white-space: nowrap;
+            padding-right: 15px;
+        }
+        .list-entry-details {
+            flex: 1 1 auto; /* Takes remaining space */
+        }
+        .list-entry-details p, .list-entry-details div {
+             margin: 0 0 2px 0; /* Minimal spacing within details */
+        }
+        .detail-indent {
+             margin-left: 30px; /* Increased indent for sub-details like thesis */
+             font-size: 10pt;
+        }
+
+        .numbered-list { padding-left: 25px; list-style-position: outside; }
+        .numbered-list li { margin-bottom: 8px; padding-left: 5px; } /* Add padding for number alignment */
+
+         .publication-status { font-style: italic; margin-left: 5px; }
+         .grant-role { font-style: italic; }
+         .grant-costs { font-size: 10pt; margin-left: 15px; }
+
+         /* Simple list format for keywords etc. */
+         .keyword-list { padding-left: 15px; margin-top: 5px; }
+
+         /* Project Section Specific Styles */
+        .item-line-1 {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2px;
+        }
+        .item-name {
+            font-weight: bold;
+            font-size: 11pt; /* Match entry-line-1 */
+            color: #000;
+        }
+        .item-location { /* Used for the [Link] */
+            font-size: 0.9em; /* Slightly smaller link */
+            text-align: right;
+            color: #444; /* Link color */
+            flex-shrink: 0;
+            padding-left: 10px;
+        }
+        .item-location a {
+            color: inherit;
+            text-decoration: none;
+        }
+        .item-location a:hover {
+            text-decoration: underline;
+        }
+        .item-title { /* Used for Technologies / Project Title */
+            font-style: italic;
+            font-size: 10.5pt; /* Match body */
+            display: block;
+            margin-top: 1px;
+            margin-bottom: 4px;
+            color: #222;
+        }
+        .item-bullets { /* Use existing bullet-list styling */
+            list-style: none;
+            margin-left: 20px; /* Match bullet-list */
+            margin-top: 5px; /* Match bullet-list */
+            padding-left: 0;
+            font-size: 10.5pt; /* Match bullet-list */
+        }
+        .item-bullets li {
+            margin-bottom: 5px; /* Match bullet-list */
+            position: relative;
+            padding-left: 18px; /* Match bullet-list */
+            line-height: 1.3; /* Match bullet-list */
+        }
+        .item-bullets li::before { /* Use existing bullet style */
+            content: "•";
+            position: absolute;
+            left: 0;
+            top: 1px; /* Match bullet-list */
+            font-size: 1.1em;
+            color: #000;
+        }
+        /* Ensure paragraphs used for descriptions get indented */
+         p.entry-detail {
+             margin-left: 20px;
+             margin-top: 5px;
+             margin-bottom: 3px;
+         }
+         /* Bullet Lists (General) */
+        .bullet-list {
+            list-style: none;
+            margin-left: 20px; /* Indentation for bullets */
+            margin-top: 5px;
+            padding-left: 0;
+        }
+        .bullet-list li {
+            margin-bottom: 5px; /* Space between bullets */
+            position: relative;
+            padding-left: 18px; /* Space for the bullet */
+            font-size: 10.5pt;
+            line-height: 1.3;
+        }
+        .bullet-list li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            top: 1px; /* Adjust vertical alignment */
+            font-size: 1.1em;
+            color: #000;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="cv-container">
+        <div class="cv-header-title">University of California San Francisco</div>
+        <div class="cv-header-main">Curriculum Vitae</div>
+        <div class="cv-header-prepared">Prepared: {{ prepared_date | default("YYYY-MM-DD") }}</div>
+
+        <!-- Contact Info -->
+        <dl class="contact-info">
+            {% if name %}
+            <dt>Name:</dt>
+            <dd>{{ name }}</dd>
+            {% endif %}
+
+            {# Position placeholder requires specific context data #}
+            {% if primary_position or department or school %}
+            <dt>Position:</dt>
+            <dd>{{ primary_position | default('') }}{% if department %}<br>{{ department }}{% endif %}{% if school %}<br>{{ school }}{% endif %}</dd>
+            {% endif %}
+            {% if secondary_position %}
+                 <dd>{{ secondary_position }}</dd>
+            {% endif %}
+             {% if graduate_programs and graduate_programs|length > 0 %}
+                 <dd>Graduate Program Member: {{ graduate_programs | join (', ') }}</dd>
+             {% endif %}
+
+            {% if location %}
+            <dt>Address:</dt>
+            <dd>[Office Address Not Provided]<br>{{ location }}</dd>
+            {% endif %}
+
+            {% if phone %}
+            <dt>Voice:</dt>
+            <dd>{{ phone }}</dd>
+            {% endif %}
+
+            {% if email %}
+            <dt>email:</dt>
+            <dd><a href="mailto:{{ email }}">{{ email }}</a></dd>
+            {% endif %}
+
+            {% if portfolio or github or linkedin %}
+            <dt>www:</dt>
+            <dd>
+                {% if portfolio %}<a href="{{ portfolio }}" target="_blank">{{ portfolio }}</a><br>{% endif %}
+                {% if github %}<a href="{{ github }}" target="_blank">{{ github }}</a><br>{% endif %}
+                {% if linkedin %}<a href="{{ linkedin }}" target="_blank">{{ linkedin }}</a>{% endif %}
+            </dd>
+            {% endif %}
+        </dl>
+
+        <!-- EDUCATION -->
+        {% if education and education|length > 0 %}
+        <div class="cv-section">
+            <div class="cv-section-title">Education</div>
+            {% for edu in education %}
+            <div class="list-entry">
+                <div class="list-entry-dates">{{ edu.year | default('YYYY') }}</div>
+                <div class="list-entry-details">
+                    {{ edu.institute_name | default('Institution') }}{% if edu.location %}, {{ edu.location }}{% endif %}<br>
+                    {{ edu.qualification | default('Degree') }}{% if edu.specialization %}, {{ edu.specialization }}{% endif %}
+                    {% if edu.details %}<div class="detail-indent">{{ edu.details }}</div>{% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- PRINCIPAL POSITIONS HELD (using 'experience' context) -->
+        {% if experience and experience|length > 0 %}
+        <div class="cv-section">
+            <div class="cv-section-title">Principal Positions Held</div>
+            {% for exp in experience %}
+            <div class="list-entry">
+                {% set start_yr = exp.start_date | default(exp.year | default('YYYY')) %}
+                {% set end_yr = exp.end_date | default('Present' if loop.last else start_yr) %}
+                <div class="list-entry-dates">{{ start_yr }}{% if start_yr != end_yr %} – {{ end_yr }}{% endif %}</div>
+                <div class="list-entry-details">
+                     {{ exp.company | default('Institution') }}{% if exp.location %}, {{ exp.location }}{% endif %}<br>
+                     {{ exp.title | default(exp.position | default('Position/Title')) }}
+                     {% if exp.department %}<br>{{ exp.department }}{% endif %}
+                     {% if exp.description %}
+                         {% if exp.description is iterable and exp.description is not string %}
+                             <ul class="bullet-list" style="margin-left: 0; margin-top: 3px;">
+                                {% for point in exp.description %}{% if point.strip() %}<li>{{ point.strip() }}</li>{% endif %}{% endfor %}
+                             </ul>
+                         {% else %}
+                              <p class="entry-detail" style="margin-left: 0; margin-top: 3px;">{{ exp.description }}</p>
+                         {% endif %}
+                     {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- HONORS AND AWARDS -->
+        {% if awards and awards|length > 0 %}
+        <div class="cv-section">
+            <div class="cv-section-title">Honors and Awards</div>
+            {% for award in awards %}
+            <div class="list-entry">
+                <div class="list-entry-dates">{{ award.year | default('YYYY') }}</div>
+                <div class="list-entry-details">{{ award.title | default('Award Name') }}{% if award.issuer %}, {{ award.issuer }}{% endif %}</div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- KEYWORDS/AREAS OF INTEREST -->
+        {% if summary or interests %}
+         <div class="cv-section">
+            <div class="cv-section-title">Keywords/Areas of Interest</div>
+            {% if summary %}
+                <div class="keyword-list">{{ summary }}</div>
+            {% elif interests %}
+                <div class="keyword-list">{{ interests | join(', ') }}</div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+
+        <!-- PROFESSIONAL ORGANIZATIONS -->
+        {% if professional_memberships and professional_memberships|length > 0 %}
+        <div class="cv-section">
+            <div class="cv-section-title">Professional Organizations</div>
+            <div class="cv-subsection-title">Memberships</div>
+            {% for member in professional_memberships %}
+             <div class="list-entry">
+                <div class="list-entry-dates">{{ member.start_year | default('YYYY') }}–{{ member.end_year | default('Present') }}</div>
+                <div class="list-entry-details">{{ member.organization | default('Organization Name') }}</div>
+            </div>
+            {% endfor %}
+
+            {% set service_memberships = professional_memberships | selectattr('position', 'defined') | selectattr('position') | reject('equalto', 'Member') | list %}
+            {% if service_memberships | length > 0 %}
+             <div class="cv-subsection-title" style="margin-top: 15px;">Service to Professional Organizations</div>
+              {% for member in service_memberships %}
+               <div class="list-entry">
+                  <div class="list-entry-dates">{{ member.start_year | default('YYYY') }}–{{ member.end_year | default('Present') }}</div>
+                  <div class="list-entry-details">
+                      {{ member.organization | default('Organization Name') }}<br>
+                      {{ member.position }}
+                       {% if member.contributions and member.contributions|length > 0 %}
+                           <ul class="bullet-list" style="margin-left: 0; margin-top: 3px;">
+                           {% for point in member.contributions %}
+                               {% if point.strip() %}<li>{{ point.strip() }}</li>{% endif %}
+                           {% endfor %}
+                           </ul>
+                       {% endif %}
+                  </div>
+              </div>
+              {% endfor %}
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- INVITED PRESENTATIONS -->
+        {% set presentation_keywords = ['presentation', 'invited', 'plenary', 'poster', 'platform', 'talk', 'symposium', 'conference'] %}
+        {% set presentations = [] %}
+        {% if publications and publications|length > 0 %}
+            {% for pub in publications %}
+                {% if pub.publication_type and (presentation_keywords | select('in', pub.publication_type.lower()) | list | length > 0) %}
+                    {% set _ = presentations.append(pub) %}
+                 {% elif pub.conference_name and not pub.journal_name and not pub.book_title %}
+                     {% set _ = presentations.append(pub) %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
+        {% if presentations|length > 0 %}
+        <div class="cv-section">
+            <div class="cv-section-title">Invited Presentations</div>
+             {% for pres in presentations %}
+              <div class="list-entry">
+                  <div class="list-entry-dates">{{ pres.year | default('YYYY') }}</div>
+                  {% set event = pres.event_name | default(pres.conference_name | default(pres.journal_name | default('Event/Meeting'))) %}
+                  <div class="list-entry-details">{{ event }}{% if pres.location %}; {{ pres.location }}{% endif %} ({{ pres.publication_type | default('Presentation') }})</div>
+              </div>
+             {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- GOVERNMENT and OTHER PROFESSIONAL SERVICE -->
+        {% if community_service and community_service|length > 0 %}
+        <div class="cv-section">
+            <div class="cv-section-title">Government and Other Professional Service</div>
+             {% for service in community_service %}
+                <div class="list-entry">
+                    <div class="list-entry-dates">{{ service.year | default('YYYY') }}</div>
+                    <div class="list-entry-details">
+                        {{ service.organization | default('Organization') }}<br>
+                        {{ service.activity | default('Role/Activity') }}
+                         {% if service.description %}<div>{{ service.description }}</div>{% endif %}
+                    </div>
+                </div>
+             {% endfor %}
+        </div>
+        {% endif %}
+
+
+        <!-- TEACHING and MENTORING -->
+        {% if teaching_experience and teaching_experience|length > 0 %}
+        <div class="cv-section">
+            <div class="cv-section-title">Teaching and Mentoring</div>
+            <div class="cv-subsection-title">Formal Scheduled Classes</div>
+            {% for exp in teaching_experience %}
+                 <div class="list-entry">
+                     <div class="list-entry-dates">{{ exp.year | default('YYYY') }}</div>
+                     <div class="list-entry-details">
+                         {% if exp.course_number %}{{ exp.course_number }}; {% endif %}{{ exp.course_title | default('Course Title') }}<br>
+                         Role: {{ exp.role | default('Teaching Contribution') }}
+                         {% if exp.level %} ({{ exp.level }}){% endif %}
+                         {% if exp.details %} - {{ exp.details }}{% endif %}
+                         {% if exp.description %} <p class="entry-detail" style="margin-left: 0;">{{ exp.description }}</p>{% endif %}
+                     </div>
+                 </div>
+            {% endfor %}
+            {# Narratives Removed #}
+        </div>
+        {% endif %}
+
+
+        <!-- RESEARCH AND CREATIVE ACTIVITIES -->
+        {% if grants or publications or projects %}
+        <div class="cv-section">
+            <div class="cv-section-title">Research and Creative Activities</div>
+
+            {% if grants and grants|length > 0 %}
+            <div class="cv-subsection-title">Research Awards and Grants</div>
+                 {% set current_grants = [] %}
+                 {% set pending_grants = [] %}
+                 {% set past_grants = [] %}
+                 {% for grant in grants %}
+                     {% set status_lower = grant.status | lower if grant.status else '' %}
+                     {% if status_lower == 'pending' %}
+                         {% set _ = pending_grants.append(grant) %}
+                     {% elif status_lower in ['past', 'completed', 'closed'] %}
+                         {% set _ = past_grants.append(grant) %}
+                     {% else %}
+                         {% set _ = current_grants.append(grant) %}
+                     {% endif %}
+                 {% endfor %}
+
+                 {% if current_grants %}
+                 <h4 style="margin-left: 15px; text-transform: uppercase; font-weight: normal; font-size: 10.5pt;">Current</h4>
+                 <ol class="numbered-list">
+                 {% for grant in current_grants %}
+                    <li>
+                        {% if grant.role %}(<span class="grant-role">{{ grant.role }}</span>){% endif %}
+                        {% if grant.granting_agency %}{{ grant.granting_agency }}{% else %}Funding Source{% endif %}<br>
+                        "{{ grant.grant_title | default('Grant Title') }}"<br>
+                        {% if grant.amount is defined %}
+                            {% if grant.amount is number %}${{ "{:,.0f}".format(grant.amount) }}{% else %}{{ grant.amount }}{% endif %},
+                        {% endif %}
+                        {{ grant.start_date | default(grant.year | default('YYYY')) }} - {{ grant.end_date | default('Present') }}
+                         {% if grant.description %}<br><span style="font-size: 10pt; margin-left: 15px;">{{ grant.description }}</span>{% endif %}
+                    </li>
+                 {% endfor %}
+                 </ol>
+                 {% endif %}
+
+                 {% if pending_grants %}
+                 <h4 style="margin-left: 15px; text-transform: uppercase; font-weight: normal; font-size: 10.5pt;">Pending</h4>
+                  <ol class="numbered-list" start="{{ current_grants|length + 1 }}">
+                      {% for grant in pending_grants %}
+                      <li>
+                        {% if grant.role %}(<span class="grant-role">{{ grant.role }}</span>){% endif %}
+                        {% if grant.granting_agency %}{{ grant.granting_agency }}{% else %}Funding Source{% endif %}<br>
+                        "{{ grant.grant_title | default('Grant Title') }}"<br>
+                        {% if grant.amount is defined %}
+                            {% if grant.amount is number %}Proposed Costs: ${{ "{:,.0f}".format(grant.amount) }}{% else %}Proposed Costs: {{ grant.amount }}{% endif %},
+                        {% endif %}
+                        Proposed Period: {{ grant.start_date | default(grant.year | default('YYYY')) }} - {{ grant.end_date | default('YYYY') }}
+                         {% if grant.description %}<br><span style="font-size: 10pt; margin-left: 15px;">{{ grant.description }}</span>{% endif %}
+                      </li>
+                      {% endfor %}
+                  </ol>
+                 {% endif %}
+
+                 {% if past_grants %}
+                 <h4 style="margin-left: 15px; text-transform: uppercase; font-weight: normal; font-size: 10.5pt;">Past</h4>
+                   <ol class="numbered-list" start="{{ current_grants|length + pending_grants|length + 1 }}">
+                      {% for grant in past_grants %}
+                      <li>
+                         {% if grant.role %}(<span class="grant-role">{{ grant.role }}</span>){% endif %}
+                         {% if grant.granting_agency %}{{ grant.granting_agency }}{% else %}Funding Source{% endif %}<br>
+                         "{{ grant.grant_title | default('Grant Title') }}"<br>
+                         {% if grant.amount is defined %}
+                             {% if grant.amount is number %}${{ "{:,.0f}".format(grant.amount) }}{% else %}{{ grant.amount }}{% endif %},
+                         {% endif %}
+                         Funding Period: {{ grant.start_date | default(grant.year | default('YYYY')) }} - {{ grant.end_date | default('YYYY') }}
+                         {% if grant.description %}<br><span style="font-size: 10pt; margin-left: 15px;">{{ grant.description }}</span>{% endif %}
+                      </li>
+                      {% endfor %}
+                  </ol>
+                 {% endif %}
+            {% endif %}
+
+
+            {% if publications and publications|length > 0 %}
+            <div class="cv-subsection-title">Peer Reviewed Publications</div>
+                 <ol class="numbered-list">
+                 {% for pub in publications %}
+                    <li>
+                         {% set display_authors = pub.authors | default('Authors') %}
+                         {% if display_authors is string %}
+                             {% set author_parts = display_authors.split(',', 1) %}
+                             {% if author_parts[0].strip().startswith('User ') %}
+                                 {% set display_authors = name ~ (', ' ~ author_parts[1].strip() if author_parts|length > 1 else '') %}
+                             {% endif %}
+                         {% endif %}
+                        {{ display_authors }}.
+                        {{ pub.title | default('Title') }}.
+                        {% if pub.journal_name %}
+                             <em>{{ pub.journal_name }}</em>.
+                        {% elif pub.book_title %}
+                             In <em>{{ pub.book_title }}</em>.
+                        {% elif pub.conference_name %}
+                             <em>{{ pub.conference_name }}</em>.
+                        {% else %}
+                            [Venue Missing].
+                        {% endif %}
+                         {% if pub.volume %}{{ pub.volume }}{% endif %}{% if pub.issue %}({{ pub.issue }}){% endif %}{% if pub.page_numbers %}:{{ pub.page_numbers }}{% endif %},
+                         {{ pub.year | default('YYYY') }}.
+                         {% if pub.status and pub.status|lower == 'in press' %}<span class="publication-status">[In Press]</span>{% endif %}
+                         {% if pub.pmid %} PMID: {{ pub.pmid }}.{% endif %}
+                         {% if pub.link %} <a href="{{ pub.link }}" target="_blank">[Link]</a>{% endif %}
+                         {% if pub.doi %} doi:{{ pub.doi }}.{% endif %}
+                    </li>
+                 {% endfor %}
+                 </ol>
+            {% endif %}
+
+
+            {% if projects and projects|length > 0 %}
+             <div class="cv-subsection-title">Other Creative Activities</div>
+                  {% for proj in projects %}
+                      <div style="margin-left: 15px; margin-bottom: 8px;">
+                          <strong class="item-name">{{ proj.project_name | default(proj.name | default('Project')) }}</strong>
+                          {% if proj.tech %}(<span class="item-title" style="display: inline;">{{ proj.tech|join(', ') }}</span>){% endif %}
+                          {% if proj.link %} <a href="{{ proj.link }}" target="_blank" class="item-location" style="padding-left: 5px;">[Link]</a>{% endif %}<br>
+                          {% if proj.description %}
+                            {% if proj.description is iterable and proj.description is not string %}
+                                <ul class="item-bullets" style="margin-left: 0; margin-top: 2px;">
+                                    {% for point in proj.description %}{% if point.strip() %}<li>{{ point.strip() }}</li>{% endif %}{% endfor %}
+                                </ul>
+                            {% else %}
+                                <p style="margin-left: 0; margin-top: 2px;">{{ proj.description }}</p>
+                            {% endif %}
+                          {% endif %}
+                      </div>
+                  {% endfor %}
+            {% endif %}
+
+             {# Research Narrative Removed #}
+
+        </div>
+        {% endif %} {# End RESEARCH AND CREATIVE ACTIVITIES section #}
+
+
+        <!-- References -->
+        {% if references and references|length > 0 %}
+        <div class="cv-section">
+            <div class="cv-section-title">References</div>
+            {% for ref in references %}
+             <div class="list-entry" style="padding-left: 0;">
+                 <div class="list-entry-details">
+                    <strong>{{ ref.name | default('Name') }}</strong>{% if ref.title %}, {{ ref.title }}{% endif %}<br>
+                    {% if ref.affiliation %}{{ ref.affiliation }}<br>{% endif %}
+                    {% if ref.email %}<a href="mailto:{{ ref.email }}">{{ ref.email }}</a>{% endif %}
+                    {% if ref.email and ref.phone %} | {% endif %}
+                    {% if ref.phone %}{{ ref.phone }}{% endif %}
+                    {% if ref.relation %}<br><em>Relation: {{ ref.relation }}</em>{% endif %}
+                 </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+
+    </div> <!-- /.cv-container -->
+</body>
+</html>

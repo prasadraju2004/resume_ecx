@@ -13,7 +13,6 @@ app = Flask(__name__)
 app.config["MONGO_URI"] = "mongodb+srv://raju:ecxraju@ecxrb.xyf1gi2.mongodb.net/resume_gen"
 mongo = PyMongo(app)
 
-RESUME_TEMPLATE = 'resume2.html'
 
 
 

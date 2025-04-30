@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if name %}{{ name }}{% else %}Resume{% endif %}</title>
+    <style>
+        /* Basic Styles & Font */
+        body, h1, h2, h3, p, ul, li, div { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, Helvetica, sans-serif; /* Standard Sans-Serif */
+            line-height: 1.45; margin: 0; padding: 0;
+            background-color: #fff; color: #000;
+            font-size: 10.5pt; /* Common professional resume size */
+        }
+        .resume-container {
+            max-width: 7.5in;
+            min-height: 10in;
+            margin: 0 auto;
+            padding: 0.6in 0.75in;
+        }
+        a { color: #0000EE; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        strong { font-weight: bold; }
+        em { font-style: italic; }
+
+        /* --- Header --- */
+        .header { text-align: center; margin-bottom: 20px; }
+        .header-name { font-size: 1.9em; font-weight: bold; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 1px; }
+        .header-title { font-size: 1.1em; font-weight: bold; margin-bottom: 8px; color: #333; }
+        .header-contact { font-size: 0.9em; color: #444; }
+        .contact-separator { margin: 0 5px; color: #888; }
+
+        /* --- Section --- */
+        .section { margin-bottom: 18px; page-break-inside: avoid; }
+        .section-title {
+            font-size: 1.0em; font-weight: bold; text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+        }
+        .section-divider {
+            border: none; border-top: 1.5px solid #000;
+            margin-top: 0; margin-bottom: 12px;
+        }
+        .section-content { padding-left: 0; }
+
+        /* --- Experience & Education Entries --- */
+        .entry { margin-bottom: 18px; }
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline; /* Align baseline */
+            margin-bottom: 1px;
+        }
+        .entry-company { font-weight: bold; font-size: 1.0em; flex-grow: 1; padding-right: 10px; }
+        .entry-meta { text-align: right; flex-shrink: 0; }
+        .entry-location { font-size: 0.9em; color: #333; display: block; }
+        .entry-date { font-size: 0.9em; color: #333; font-weight: bold; display: block; }
+
+        .entry-subtitle { margin-top: 1px; margin-bottom: 5px; }
+        .entry-job-title { font-weight: bold; font-style: italic; font-size: 0.95em; } /* Job Title / Degree */
+
+        .entry-bullets {
+            list-style: none; /* Remove default */
+            padding-left: 0;
+            margin-top: 5px;
+            margin-left: 10px; /* Indent bullets slightly */
+        }
+        .entry-bullets li {
+            font-size: 0.95em;
+            margin-bottom: 5px;
+            padding-left: 18px; /* Space for bullet */
+            position: relative;
+            line-height: 1.4;
+        }
+        /* Filled circle bullet point */
+        .entry-bullets li::before {
+            content: "•"; /* Bullet character */
+            position: absolute;
+            left: 0px; /* Position bullet */
+            top: 0px;
+            font-weight: bold;
+            font-size: 1.1em; /* Adjust bullet size */
+        }
+        /* Style for sub-bullets (if description contains them, requires manual formatting in data) */
+        .entry-bullets .sub-bullet { margin-left: 18px; padding-left: 15px; }
+        .entry-bullets .sub-bullet::before { content: "-"; left: 0px; top: -1px; }
+
+
+        /* --- Additional Information --- */
+        .additional-info-list {
+            list-style: none; padding-left: 0; margin-left: 10px;
+        }
+        .additional-info-list li {
+            font-size: 0.95em;
+            margin-bottom: 5px;
+            padding-left: 18px;
+            position: relative;
+        }
+        .additional-info-list li::before {
+            content: "•"; position: absolute; left: 0; top: 0; font-weight: bold; font-size: 1.1em;
+        }
+        .additional-info-list strong { margin-right: 5px; } /* Space after category label */
+
+
+        /* --- Conditionally Added Sections --- */
+        .conditional-section { margin-top: 18px; border-top: 1px dashed #ccc; padding-top: 15px; }
+        .conditional-section .section-title { font-style: italic; }
+        .conditional-section ul { list-style: disc; padding-left: 25px; }
+        .conditional-section li::before { content: ""; } /* Remove custom bullet */
+
+    </style>
+</head>
+<body>
+
+    <div class="resume-container">
+
+        <!-- Header -->
+        <div class="header">
+            {% if name %}<h1 class="header-name">{{ name }}</h1>{% endif %}
+            {# Use title from first experience entry if available #}
+            {% if experience and experience[0].title %}<h2 class="header-title">{{ experience[0].title }}</h2>{% endif %}
+            <p class="header-contact">
+                {% if location %}{{ location }}{% endif %}
+                {% if location and email %}<span class="contact-separator">•</span>{% endif %}
+                {% if email %}<a href="mailto:{{ email }}">{{ email }}</a>{% endif %}
+                {% if email and phone %}<span class="contact-separator">•</span>{% endif %}
+                {% if phone %}{{ phone }}{% endif %}
+            </p>
+        </div>
+
+        <!-- Professional Experience -->
+        {% if experience and experience|length > 0 %}
+        <div class="section">
+            <h2 class="section-title">Professional Experience</h2>
+            <hr class="section-divider">
+            <div class="section-content">
+                {% for exp in experience %}
+                <div class="entry">
+                     <div class="entry-header">
+                        <span class="entry-company">{{ exp.company }}</span>
+                        <span class="entry-meta">
+                            {% if exp.location %}<span class="entry-location">{{ exp.location }}</span>{% endif %}
+                            {% if exp.year %}<span class="entry-date">{{ exp.year }}</span>{% endif %}
+                        </span>
+                    </div>
+                    <div class="entry-subtitle">
+                         <span class="entry-job-title">{{ exp.title }}</span>
+                    </div>
+                    {% if exp.description %}
+                    <ul class="entry-bullets">
+                        {# Assumes description is pre-formatted or single points #}
+                        {# To get sub-bullets like image, data needs structure or manual formatting #}
+                        <li>{{ exp.description | replace('\n', '</li><li>') | safe }}</li>
+                    </ul>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Education -->
+        {% if education and education|length > 0 %}
+        <div class="section">
+            <h2 class="section-title">Education</h2>
+            <hr class="section-divider">
+            <div class="section-content">
+                {% for edu in education %}
+                <div class="entry">
+                    <div class="entry-header">
+                        <span class="entry-company">{{ edu.institute_name }}</span>
+                        <span class="entry-meta">
+                             {% if edu.location %}<span class="entry-location">{{ edu.location }}</span>{% endif %}
+                             {% if edu.year %}<span class="entry-date">{{ edu.year }}</span>{% endif %}
+                        </span>
+                    </div>
+                     <div class="entry-subtitle">
+                         <span class="entry-job-title">{{ edu.qualification }}{% if edu.specialization %} - {{ edu.specialization }}{% endif %}</span>
+                     </div>
+                    {% if edu.details %}
+                    <ul class="entry-bullets">
+                         {# Display details as bullet points #}
+                        <li>{{ edu.details | replace('\n', '</li><li>') | safe }}</li>
+                    </ul>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Additional Information -->
+        {% if skills or awards or languages or interests or linkedin or github or portfolio %}
+        <div class="section">
+            <h2 class="section-title">Additional Information</h2>
+            <hr class="section-divider">
+            <div class="section-content">
+                <ul class="additional-info-list">
+                    {% if skills %}
+                        <li><strong>Technical Skills:</strong> {{ skills.split(',') | join(', ') }}</li>
+                    {% endif %}
+                    {% if awards and awards|length > 0 %}
+                        <li><strong>Awards:</strong>
+                            {% for award in awards %}
+                                {{ award.title }}
+                                {%- if award.issuer %}, {{ award.issuer }}{% endif %}
+                                {%- if award.year %} ({{ award.year }}){% endif -%}
+                                {%- if not loop.last %}; {% endif -%} {# Separator #}
+                            {% endfor %}
+                        </li>
+                    {% endif %}
+                     {% if languages %}
+                        <li><strong>Languages:</strong> {{ languages }}</li>
+                    {% endif %}
+                     {% if interests %}
+                        <li><strong>Interests:</strong> {{ interests }}</li>
+                    {% endif %}
+                     {% if linkedin %}
+                        <li><strong>LinkedIn:</strong> <a href="{{ linkedin }}" target="_blank">{{ linkedin }}</a></li>
+                     {% endif %}
+                      {% if github %}
+                        <li><strong>GitHub:</strong> <a href="{{ github }}" target="_blank">{{ github }}</a></li>
+                     {% endif %}
+                     {% if portfolio %}
+                        <li><strong>Portfolio:</strong> <a href="{{ portfolio }}" target="_blank">{{ portfolio }}</a></li>
+                     {% endif %}
+                     {# Add other categories here if needed, e.g., Certifications #}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+
+
+        <!-- Conditionally Added Sections for Data Compatibility -->
+
+        <!-- Summary/Profile -->
+        {% if summary %}
+        <div class="section conditional-section">
+            <h2 class="section-title">Profile Summary</h2>
+            <div class="section-content">
+                <p>{{ summary }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Projects -->
+        {% if projects and projects|length > 0 %}
+        <div class="section conditional-section">
+            <h2 class="section-title">Projects</h2>
+            <div class="section-content">
+                {% for proj in projects %}
+                 <div style="margin-bottom: 10px;">
+                     <p><strong>{{ proj.project_name }}</strong> {% if proj.link %}(<a href="{{ proj.link }}" target="_blank">Link</a>){% endif %}</p>
+                     {% if proj.title %}<p><em>{{ proj.title }}</em></p>{% endif %}
+                     {% if proj.tech and proj.tech|length > 0 %}<p>Technologies: {{ proj.tech|join(', ') }}</p>{% endif %}
+                     {% if proj.description %}<ul><li>{{ proj.description }}</li></ul>{% endif %}
+                 </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+
+</body>
+</html>
