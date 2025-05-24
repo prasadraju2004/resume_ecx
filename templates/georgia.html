@@ -13,24 +13,32 @@
             font-size: 10.5pt;
         }
         .resume-container { max-width: 8.5in; min-height: 11in; margin: 0 auto; padding: 0.7in 0.8in; }
+        a { word-break: break-all; } /* Help long links wrap */
 
         /* Header */
-        .header-name { text-align: left; font-size: 1.4em; font-weight: bold; margin-bottom: 3px; color: #000; }
-        .header-contact { text-align: left; font-size: 0.95em; margin-bottom: 20px; color: #333; }
+        .header-name { text-align: left; font-size: 1.4em; font-weight: bold; margin-bottom: 3px; color: #000; word-break: break-word; }
+        .header-contact { text-align: left; font-size: 0.95em; margin-bottom: 20px; color: #333; line-height: 1.5; /* Allow space for wrapping */ }
         .header-contact span { white-space: nowrap; }
         .header-contact .separator { margin: 0 5px; font-weight: bold; color: #555; } /* Bullet separator */
         .header-contact a { color: inherit; text-decoration: none; }
         .header-contact a:hover { text-decoration: underline; }
 
         /* Section Title */
-        .section-title { font-size: 0.95em; font-weight: bold; text-transform: uppercase; border-bottom: 0.7px solid #000; padding-bottom: 1px; margin-top: 14px; margin-bottom: 8px; page-break-after: avoid; color: #000; letter-spacing: 0.5px; }
+        .section-title { font-size: 0.95em; font-weight: bold; text-transform: uppercase; border-bottom: 0.7px solid #000; padding-bottom: 1px; margin-top: 14px; margin-bottom: 8px; page-break-after: avoid; color: #000; letter-spacing: 0.5px; word-break: break-word; }
 
         /* Summary */
         .summary-bullets { list-style: disc; margin-left: 20px; padding-left: 0; margin-top: 2px; }
-        .summary-bullets li { margin-bottom: 3px; line-height: 1.35; font-size: 1.0em; color: #222; }
+        .summary-bullets li { margin-bottom: 3px; line-height: 1.35; font-size: 1.0em; color: #222; word-break: break-word; }
 
         /* General Entry Item Structure */
-        .entry-item { margin-bottom: 12px; page-break-inside: avoid; position: relative; /* Needed for absolute positioning of right part */ padding-right: 1.5in; /* Space for right aligned content */ min-height: 3em; /* Ensure space for right content */ }
+        .entry-item {
+            margin-bottom: 12px;
+            page-break-inside: avoid;
+            position: relative; /* Needed for absolute positioning of right part */
+            padding-right: 1.5in; /* Space for right aligned content */
+            min-height: 2.5em; /* Ensure space for right content, adjust based on line-height */
+        }
+        .entry-left-main { word-break: break-word; } /* Allow left content to wrap */
         .entry-right-aligned { /* Content to be right aligned */
             position: absolute;
             top: 0;
@@ -40,6 +48,7 @@
             font-size: 0.95em;
             color: #222;
             line-height: 1.3;
+            word-break: break-word; /* Allow text within to wrap */
         }
         .entry-right-aligned span { display: block; /* Each item on new line */ }
 
@@ -49,7 +58,7 @@
         .edu-details { font-size: 0.95em; display: block; margin-top: 1px; color: #333; } /* For EIT, Passed Exam etc */
 
         /* Skills Specific */
-        .skills-content { line-height: 1.4; font-size: 1.0em; color: #222; }
+        .skills-content { line-height: 1.4; font-size: 1.0em; color: #222; word-break: break-word; }
         .skills-content strong { font-weight: bold; color: #000; } /* Bold labels */
 
         /* Project/Experience Specific */
@@ -57,8 +66,87 @@
         .item-primary-title { font-weight: bold; font-size: 1.0em; color: #000; display: inline; } /* Group Project / Company */
         .item-secondary-title { font-style: italic; font-size: 1.0em; color: #111; margin-left: 5px; display: inline; } /* Methodology / Job Title */
         .item-bullets { list-style: disc; margin-left: 20px; padding-left: 0; margin-top: 4px; }
-        .item-bullets li { margin-bottom: 3px; line-height: 1.35; font-size: 1.0em; color: #222; }
+        .item-bullets li { margin-bottom: 3px; line-height: 1.35; font-size: 1.0em; color: #222; word-break: break-word; }
 
+
+        /* --- Print Optimizations --- */
+        @media print {
+            body { background-color: #fff; font-size: 10pt; } /* Slightly smaller for print if needed */
+            .resume-container { box-shadow: none; margin: 0; padding: 0.5in; border: none; max-width: 100%; min-height: auto; }
+        }
+
+        /* --- Mobile Responsive Adjustments (Conservative Structure Preservation) --- */
+        @media (max-width: 768px) {
+            body {
+                font-size: 11.5pt; /* Increased base font for mobile */
+                line-height: 1.45; /* Adjusted for new font size */
+                -webkit-text-size-adjust: 100%;
+                text-size-adjust: 100%;
+            }
+            .resume-container {
+                padding: 0.5in 0.4in; /* Reduced overall padding */
+                max-width: 100%;
+                min-height: auto;
+            }
+
+            /* Header Contact */
+            .header-contact span {
+                white-space: normal; /* Allow individual contact items to wrap */
+                display: inline-block; /* Helps with spacing of wrapped items and separators */
+                margin-bottom: 3px; /* Add space if items stack */
+            }
+            .header-contact .separator {
+                /* If a separator ends up alone on a line, it can be hidden: */
+                /* Or adjust margins if it looks odd when wrapped */
+            }
+
+            /* Section Title font-size uses 'em', will scale. Line height also. */
+
+            /* Bullet list indentation */
+            .summary-bullets, .item-bullets {
+                margin-left: 18px; /* Slightly reduce indent */
+            }
+
+            /* General Entry Item Structure - CRITICAL FOR PRESERVING LAYOUT */
+            .entry-item {
+                padding-right: 1.1in; /* Reduced space for right aligned content */
+                min-height: 2.8em;   /* Adjust if necessary based on new font/line-height */
+                margin-bottom: 15px;
+            }
+            .entry-right-aligned {
+                width: 1in;          /* Reduced fixed width for right content */
+                font-size: 0.9em;    /* Make text in right column smaller relative to new body font */
+                line-height: 1.35;
+            }
+
+            /* Education/Project/Experience specific font sizes are 'em', will scale. */
+            .edu-details { font-size: 0.9em; }
+        }
+
+        @media (max-width: 480px) { /* Fine-tuning for very small screens */
+            body {
+                font-size: 11pt;
+            }
+            .resume-container {
+                padding: 0.4in 0.25in;
+            }
+
+            .header-contact { font-size: 0.9em; } /* Relative to new body font */
+
+
+            .summary-bullets, .item-bullets {
+                margin-left: 16px;
+            }
+
+            .entry-item {
+                padding-right: 0.9in;
+                min-height: 3em;
+            }
+            .entry-right-aligned {
+                width: 0.8in;
+                font-size: 0.85em;
+            }
+        }
 
     </style>
 </head>
@@ -67,293 +155,164 @@
     <div class="resume-container">
 
         <!-- Header -->
-
         {% if name %} <div class="header-name">{{ name }}</div> {% endif %}
-
         <div class="header-contact">
-
             {% set contact_items = [] %}
-
             {% if phone %}        {% set _ = contact_items.append(phone) %}{% endif %}
-
             {% if email %}        {% set _ = contact_items.append('<a href="mailto:' ~ email ~ '">' ~ email ~ '</a>') %}{% endif %}
-
             {% if linkedin %}     {% set _ = contact_items.append('<a href="' ~ linkedin ~ '" target="_blank">LinkedIn</a>') %}{% endif %}
-
             {% if github %}       {% set _ = contact_items.append('<a href="' ~ github ~ '" target="_blank">GitHub</a>') %}{% endif %}
-
             {% if portfolio %}    {% set _ = contact_items.append('<a href="' ~ portfolio ~ '" target="_blank">Portfolio</a>') %}{% endif %}
-
             {% for item in contact_items %}
-
                 <span>{{ item | safe }}</span>{% if not loop.last %}<span class="separator">•</span>{% endif %}
-
             {% endfor %}
-
         </div>
 
 
         <!-- Summary -->
-
         {% if summary %}
-
         <div class="section-title">SUMMARY OF QUALIFICATIONS</div>
-
         <div class="section-content">
-
              <ul class="summary-bullets">
-
                  {% for point in summary.split('\n') if point.strip() %}
-
                      <li>{{ point.strip().lstrip('- ') }}</li>
-
                  {% endfor %}
-
              </ul>
-
         </div>
-
         {% endif %}
 
 
         <!-- Education -->
-
         {% if education and education|length > 0 %}
-
         <div class="section-title">EDUCATION</div>
-
         <div class="section-content">
-
             {% for edu in education %}
-
             <div class="entry-item">
-
                 <div class="entry-left-main">
-
                     <span class="edu-institution">{{ edu.institute_name }}</span>
-
                     <span class="edu-degree">{{ edu.qualification }} {{ edu.specialization }}</span>
-
                     {% if edu.details %}
-
                         {% for detail_line in edu.details.split('\n') if detail_line.strip() %}
-
                             <span class="edu-details">{{ detail_line.strip() }}</span>
-
                         {% endfor %}
-
                     {% endif %}
-
                 </div>
-
                 <div class="entry-right-aligned">
-
                     {% if edu.location %}<span>{{ edu.location }}</span>{% endif %}
-
                     {% if edu.year %}<span>{{ edu.year }}</span>{% endif %}
-
                 </div>
-
             </div>
-
             {% endfor %}
-
         </div>
-
         {% endif %}
 
 
         <!-- Skills -->
-
         {% if skills %}
-
         <div class="section-title">SKILLS</div>
-
         <div class="section-content skills-content">
-
             <p>{{ skills }}</p>
-
         </div>
-
         {% endif %}
 
 
         <!-- Projects -->
-
         {% if projects and projects|length > 0 %}
-
         <div class="section-title">RELEVANT PROJECT EXPERIENCE</div>
-
         <div class="section-content">
-
             {% for proj in projects %}
-
             <div class="entry-item">
-
                 <div class="entry-left-main">
-
                     <div class="item-title-line">
-
                         <span class="item-primary-title">{{ proj.project_name }}</span>
-
                         {% if proj.title %}<span class="item-secondary-title">{{ proj.title }}</span>{% endif %}
-
                     </div>
-
                     {% if proj.tech and proj.tech|length > 0 %}
-
                         <span class="edu-details">Technologies: {{ proj.tech|join(', ') }}</span>
-
                     {% endif %}
-
                     {% if proj.link %}
-
                         <span class="edu-details">Link: <a href="{{ proj.link }}" target="_blank">{{ proj.link }}</a></span>
-
                     {% endif %}
-
                     {% if proj.description %}
-
                         <ul class="item-bullets">
-
                             <li>{{ proj.description }}</li>
-
                         </ul>
-
                     {% endif %}
-
                 </div>
-
+                {# No entry-right-aligned specified for projects in this template structure,
+                   but if proj.year or proj.location were available and desired here,
+                   the .entry-right-aligned div would be added here for consistency. #}
             </div>
-
             {% endfor %}
-
         </div>
-
         {% endif %}
 
 
         <!-- Experience -->
-
         {% if experience and experience|length > 0 %}
-
         <div class="section-title">RELEVANT WORK EXPERIENCE</div>
-
         <div class="section-content">
-
             {% for exp in experience %}
-
             <div class="entry-item">
-
                 <div class="entry-left-main">
-
                     <div class="item-title-line">
-
                         <span class="item-primary-title">{{ exp.company }}</span>
-
+                        {# Removed secondary title for company - image shows only job title #}
                     </div>
-
-                    {% if exp.title %}<span class="item-secondary-title">{{ exp.title }}</span>{% endif %}
-
+                    {% if exp.title %}<span class="edu-degree">{{ exp.title }}</span>{% endif %} {# Using edu-degree style for job title italicization #}
                     {% if exp.description %}
-
                         <ul class="item-bullets">
-
                             <li>{{ exp.description }}</li>
-
                         </ul>
-
                     {% endif %}
-
                 </div>
-
                 <div class="entry-right-aligned">
-
                     {% if exp.location %}<span>{{ exp.location }}</span>{% endif %}
-
                     {% if exp.year %}<span>{{ exp.year }}</span>{% endif %}
-
                 </div>
-
             </div>
-
             {% endfor %}
-
         </div>
-
         {% endif %}
 
 
         <!-- Awards -->
-
         {% if awards and awards|length > 0 %}
-
         <div class="section-title">AWARDS</div>
-
         <div class="section-content">
-
             {% for award in awards %}
-
             <div class="entry-item">
-
                 <div class="entry-left-main">
-
                     <span class="item-primary-title">{{ award.title }}</span>
-
                     {% if award.issuer %}
-
                         <span class="item-secondary-title">{{ award.issuer }}</span>
-
                     {% endif %}
-
                 </div>
-
                 <div class="entry-right-aligned">
-
                     {% if award.year %}<span>{{ award.year }}</span>{% endif %}
-
                 </div>
-
             </div>
-
             {% endfor %}
-
         </div>
-
         {% endif %}
 
 
         <!-- Languages -->
-
         {% if languages %}
-
         <div class="section-title">LANGUAGES</div>
-
         <div class="section-content skills-content">
-
             <p>{{ languages }}</p>
-
         </div>
-
         {% endif %}
 
 
         <!-- Interests -->
-
         {% if interests %}
-
         <div class="section-title">INTERESTS</div>
-
         <div class="section-content skills-content">
-
             <p>{{ interests }}</p>
-
         </div>
-
         {% endif %}
-
-
     </div>
-
 </body>
 </html>

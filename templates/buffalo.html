@@ -59,6 +59,107 @@
 
         /* Awards Section */
         .item-issuer-line { font-style: italic; font-weight: normal; font-size: 1.0em; display: block; margin-top: 1px; margin-bottom: 2px; }
+
+        /* --- Mobile Responsive Adjustments --- */
+        @media (max-width: 768px) {
+            body {
+                font-size: 12pt; /* Increased base font size for mobile readability */
+                -webkit-text-size-adjust: 100%; /* Prevent iOS font scaling */
+                text-size-adjust: 100%; /* Prevent other mobile browser font scaling */
+                line-height: 1.35; /* Slightly increased base line-height */
+            }
+            .resume-container {
+                padding: 25px 15px; /* Reduced padding (approx 0.25in 0.15in) */
+                min-height: auto; /* Allow content to define height */
+                max-width: 100%; /* Ensure it fits screen */
+            }
+
+            .header-name {
+                font-size: 1.6em; /* Adjusted relative to new base: 12pt * 1.6 = 19.2pt */
+                margin-bottom: 10px;
+            }
+            .header-contact {
+                font-size: 0.9em; /* Adjusted relative to new base: 12pt * 0.9 = 10.8pt */
+                line-height: 1.45; /* Improved line height for wrapped items */
+                margin-bottom: 20px;
+            }
+            .header-contact span {
+                 white-space: normal; /* Allow contact items to wrap naturally */
+            }
+
+
+            .section-title {
+                font-size: 1.0em; /* Adjusted relative to new base: 12pt * 1.0 = 12pt */
+                margin-top: 15px;
+                margin-bottom: 8px;
+            }
+
+            .line-wrapper {
+                margin-bottom: 2px; /* Slightly more space between lines */
+            }
+            .line-left-content {
+                padding-right: 10px; /* Slightly reduce gap between left and right content */
+            }
+            /* Ensure right content font size is consistent with new base if it was 1.0em originally */
+            .line-right-content {
+                font-size: 0.95em; /* Relative to parent, or 1.0em of body if directly under section-content */
+                                   /* If it should match body font size, and its parent is also 1em, this can be 1em */
+                                   /* Original was 1.0em of body, so if line-wrapper elements font-size is 1em, it's fine */
+            }
+
+
+            .bullet-list {
+                margin-left: 10px; /* Slightly reduce indent */
+                margin-top: 2px;
+            }
+            .bullet-list li {
+                padding-left: 10px; /* Adjust bullet position */
+                margin-bottom: 3px; /* More space for larger text */
+                line-height: 1.35;
+            }
+
+            .edu-entry { margin-bottom: 8px; }
+            .edu-degree, .edu-institution, .item-details-line, .simple-text-section p, .item-issuer-line {
+                font-size: 1.0em; /* Ensure these scale with the new body font size */
+            }
+            .edu-institution { margin-top: 2px; margin-bottom: 3px; }
+
+
+            .item-entry { margin-bottom: 10px; }
+            .item-project-line {
+                padding-left: 10px; /* Align with new bullet list indent if desired */
+                margin-top: 2px;
+                margin-bottom: 3px;
+            }
+        }
+
+        @media (max-width: 480px) { /* Optional: Further tweaks for very small screens */
+            body {
+                font-size: 11.5pt; /* Slightly smaller if 12pt is too big on smallest phones */
+            }
+            .resume-container {
+                padding: 20px 10px;
+            }
+            .header-name {
+                font-size: 1.5em;
+            }
+            .header-contact {
+                font-size: 0.85em;
+            }
+            .line-left-content {
+                padding-right: 5px;
+            }
+            .bullet-list {
+                margin-left: 8px;
+            }
+            .bullet-list li {
+                padding-left: 8px;
+            }
+            .item-project-line {
+                padding-left: 8px;
+            }
+        }
+
     </style>
 </head>
 <body>

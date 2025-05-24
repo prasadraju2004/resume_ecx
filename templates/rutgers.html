@@ -18,7 +18,7 @@
         .header-address { text-align: center; font-size: 1.0em; margin-bottom: 8px; color: #111; line-height: 1.2; }
         .header-contact-block { text-align: left; margin-bottom: 20px; padding-left: 0; /* Align left */ }
         .header-contact-line { font-size: 1.0em; margin-bottom: 2px; }
-        .header-contact-line .label { display: inline-block; width: 100px; /* Adjust width as needed */ }
+        .header-contact-line .label { display: inline-block; width: 100px; /* Adjust width as needed */ font-weight: bold;}
         .header-contact-line a { color: #0000EE; /* Standard link blue */ text-decoration: underline; }
         .header-contact-line a:hover { color: #551A8B; /* Visited link color */ }
 
@@ -61,6 +61,88 @@
         /* Uses .bullet-list */
         .skills-entry { font-size: 1.0em; }
 
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            body {
+                font-size: 10pt; /* Slightly smaller base font */
+                line-height: 1.35;
+            }
+            .resume-container {
+                padding: 0.5in 0.5in; /* Reduce padding */
+                min-height: 0; /* Allow shrinking */
+            }
+
+            .header-name { font-size: 1.4em; margin-bottom: 3px; }
+            .header-address { font-size: 0.95em; margin-bottom: 6px; }
+            .header-contact-block { margin-bottom: 15px; }
+            .header-contact-line { font-size: 0.9em; margin-bottom: 3px; }
+            .header-contact-line .label {
+                display: block; /* Stack label above value */
+                width: auto; /* Allow label to take natural width */
+                margin-bottom: 0px;
+            }
+
+            .section-title { font-size: 0.95em; margin-top: 12px; margin-bottom: 5px;}
+            .section-content { margin-bottom: 8px; }
+
+            .line-wrapper {
+                /* display: flex; justify-content: space-between; are inherited */
+                align-items: flex-start; /* Align tops of left and right content */
+                flex-wrap: wrap; /* Allow right content to wrap if left is too long */
+                /* margin-bottom: 1px; is inherited */
+            }
+            .line-left-content {
+                /* flex-grow: 1; is inherited */
+                /* padding-right: 15px; is inherited - provides space if on same line */
+                /* margin-bottom: 0; /* Removed: no longer explicitly stacking */
+            }
+            .line-right-content {
+                /* flex-shrink: 0; is inherited */
+                text-align: right; /* CRITICAL: Keep this right-aligned */
+                font-size: 0.9em; /* Consistent smaller font for dates/meta on mobile */
+                /* If it wraps, it will be on a new "flex line", still respecting text-align: right
+                   or taking full width of this new line and aligning text to right */
+            }
+
+            .bullet-list { margin-left: 10px; margin-top: 3px; }
+            .bullet-list li { padding-left: 12px; font-size: 0.9em; margin-bottom: 2px;}
+            .bullet-list li::before { top: 0; } /* Slight adjustment for smaller font */
+
+            .edu-university { font-size: 0.95em; }
+            .edu-school, .edu-degree-major { font-size: 0.9em; }
+
+            .item-entry { margin-bottom: 10px; }
+            .item-line-1, .item-line-2 { font-size: 0.9em; }
+            .item-line-1 a { font-size: 0.9em; } /* Ensure link size matches */
+
+            .coursework-content, .skills-entry { font-size: 0.9em; }
+            .summary-text p, .section-content p { font-size: 0.9em; }
+        }
+
+        @media (max-width: 480px) {
+            body { font-size: 9.5pt; }
+            .resume-container { padding: 0.4in 0.3in; }
+
+            .header-name { font-size: 1.3em; }
+            .header-address { font-size: 0.9em; }
+            .header-contact-line { font-size: 0.85em; }
+
+            .section-title { font-size: 0.9em; }
+            
+            .line-left-content { padding-right: 10px; } /* Reduce padding slightly for very small screens */
+            .line-right-content,
+            .bullet-list li,
+            .edu-school, .edu-degree-major,
+            .item-line-1, .item-line-2,
+            .coursework-content, .skills-entry,
+            .summary-text p, .section-content p {
+                font-size: 0.85em;
+            }
+            .edu-university { font-size: 0.9em; }
+
+            .bullet-list { margin-left: 8px; }
+            .bullet-list li { padding-left: 10px; }
+        }
     </style>
 </head>
 <body>
@@ -94,7 +176,7 @@
 
         <div class="section-title">SUMMARY:</div>
 
-        <div class="section-content">
+        <div class="section-content summary-text"> {# Added a class for summary text paragraph if needed #}
 
             <p>{{ summary }}</p>
 
@@ -174,16 +256,15 @@
 
             <div class="item-entry">
 
-                <div class="line-wrapper">
+                <div class="line-wrapper"> {# This line-wrapper is for project name + link only #}
 
                     <div class="line-left-content item-line-1">
 
                         <span class="italic">{{ proj.project_name }}</span>
-
-                        {% if proj.link %}<a href="{{ proj.link }}" target="_blank">[Link]</a>{% endif %}
+                        {% if proj.link %} <a href="{{ proj.link }}" target="_blank" style="margin-left: 5px;">[Link]</a>{% endif %}
 
                     </div>
-
+                    {# No line-right-content used for dates in this specific project context #}
                 </div>
 
                 {% if proj.title %}

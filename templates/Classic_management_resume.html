@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ name }}'s Resume - {{ job_title | default('Resume') }}</title>
+    <style>
+        /* --- Basic Page Styles --- */
+        body {
+            font-family: Arial, sans-serif; /* Or a similar clean sans-serif */
+            line-height: 1.4;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f8f8;
+            color: #333;
+            font-size: 10pt; /* Base font size seems slightly smaller */
+        }
+        .resume-container {
+            max-width: 8.5in; /* Keep max-width for desktop to simulate paper */
+            min-height: 11in; /* Optional: helps visualize page */
+            margin: 25px auto;
+            background-color: #fff;
+            padding: 40px 50px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+        }
+
+        /* --- Header Styling --- */
+        .header .name {
+            font-size: 2.2em;
+            font-weight: bold;
+            margin: 0 0 2px 0;
+            color: #000;
+            text-align: center; /* Center name for better balance on mobile */
+        }
+        .header .job-title {
+            font-size: 1.2em;
+            font-weight: normal;
+            color: #333;
+            margin: 0 0 15px 0;
+            text-align: center; /* Center job title for better balance on mobile */
+        }
+        .header hr.separator {
+            border: 0;
+            height: 1px;
+            background-color: #ccc;
+            margin: 10px 0;
+        }
+        .contact-info {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            font-size: 0.95em;
+        }
+        .contact-info .contact-item {
+            flex: 1;
+            text-align: center;
+            padding: 0 10px;
+            position: relative;
+        }
+        .contact-info .contact-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 10%;
+            height: 80%;
+            width: 1px;
+            background-color: #ccc;
+        }
+         .contact-info a {
+             color: #333;
+             text-decoration: none;
+         }
+         .contact-info a:hover {
+             text-decoration: underline;
+         }
+
+
+        /* --- Section Layout --- */
+        .section {
+            display: flex;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+        .section:last-child {
+             border-bottom: none; /* No border on the very last section */
+             margin-bottom: 0;
+             padding-bottom: 0;
+        }
+
+        .section-title-col {
+            flex: 0 0 120px; /* Fixed width for section titles */
+            font-weight: bold;
+            font-size: 1.05em;
+            padding-right: 20px;
+            color: #000;
+            /* text-transform: uppercase; */ /* Optional: makes titles stand out more */
+        }
+        .section-content-col {
+            flex: 1;
+            font-size: 0.95em;
+            padding-left: 10px; /* Spacing from the vertical line or title col */
+        }
+
+        /* --- Specific Section Content --- */
+
+        /* Objective / Summary */
+        .objective-content p {
+            margin: 0;
+        }
+
+        /* Education */
+        .education-entry {
+            margin-bottom: 8px; /* Increased space between entries */
+        }
+        .education-entry .institute {
+             font-weight: bold;
+        }
+        .education-entry .details {
+            /* Optional styling for degree, GPA etc. */
+        }
+        .education-entry .location,
+        .education-entry .gpa {
+            font-size: 0.95em;
+            color: #555;
+        }
+
+
+        /* Key Skills */
+        .skills-columns {
+            column-count: 2; /* Create two columns for skills */
+            column-gap: 20px;
+        }
+        .skills-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            /* Prevent list items from breaking across columns awkwardly */
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+        .skills-list li {
+             margin-bottom: 3px;
+        }
+
+        /* Experience Section */
+        .experience-section .section-content-col {
+            padding-left: 10px; /* Original padding, might adjust for mobile */
+        }
+        .experience-summary p { /* For the general description at the top */
+            margin: 0 0 20px 0;
+        }
+
+        /* Experience Timeline Visual */
+        .experience-timeline {
+            position: relative;
+            width: 100%;
+            height: 20px; /* Adjust height as needed */
+            margin-bottom: 10px;
+        }
+        .experience-timeline::before { /* The main horizontal line */
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 5%; /* Start line slightly indented */
+            width: 90%; /* End line slightly indented */
+            height: 1px;
+            background-color: #555;
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+        .experience-timeline .timeline-point { /* Circles on the line */
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 10px;
+            background-color: #fff;
+            border: 1px solid #555;
+            border-radius: 50%;
+            z-index: 2;
+        }
+        /* Position the points - adjust percentages based on number of jobs (e.g., 3 jobs) */
+        /* These are examples, might need dynamic styling or more generic approach for many items */
+        .experience-timeline .timeline-point:nth-child(1) { left: 15%; }
+        .experience-timeline .timeline-point:nth-child(2) { left: 50%; transform: translate(-50%, -50%);} /* Center the middle one */
+        .experience-timeline .timeline-point:nth-child(3) { right: 15%; }
+        /* Add more points (:nth-child(4), etc.) and adjust left/right percentages if more jobs */
+
+
+        /* Experience Job Entries (Columns) */
+        .experience-entries {
+            display: flex;
+            justify-content: space-around; /* Space out job columns */
+            text-align: center;
+            margin-top: 15px; /* Space below timeline */
+        }
+        .experience-entry-col {
+            flex: 1;
+            padding: 0 5px; /* Small space between columns */
+            font-size: 0.9em;
+            line-height: 1.3;
+            page-break-inside: avoid; /* Try to keep job info together when printing */
+        }
+        .experience-entry-col .year {
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 3px;
+             display: block;
+        }
+        .experience-entry-col .title {
+             display: block;
+             margin-bottom: 2px;
+        }
+         .experience-entry-col .company {
+             display: block;
+             color: #444;
+         }
+
+        /* Other Text Sections (Communication, Leadership, References) */
+        .text-section-content p {
+            margin: 0;
+        }
+
+        /* --- Helper --- */
+        a { text-decoration: none; color: inherit; }
+        a:hover { text-decoration: underline; }
+
+        /* --- Print Optimizations --- */
+        @media print {
+            body { background-color: #fff; font-size: 9.5pt; margin:0; padding: 0; }
+            .resume-container { box-shadow: none; margin: 0; padding: 30px 40px; border: none; max-width: 100%; min-height: auto; }
+            .section { border-bottom: 1px solid #ccc; }
+            .contact-info .contact-item:not(:last-child)::after { background-color: #ccc; }
+            .experience-timeline::before, .experience-timeline .timeline-point { border-color: #555; }
+            a { text-decoration: none; }
+        }
+
+        /* --- Mobile Responsive Adjustments --- */
+        @media (max-width: 768px) {
+            body {
+                font-size: 11pt; /* Increased base font for mobile */
+                padding: 10px;
+                -webkit-text-size-adjust: 100%;
+                text-size-adjust: 100%;
+            }
+            .resume-container {
+                padding: 20px 15px;
+                margin: 10px auto;
+                min-height: auto;
+                max-width: 100%; /* Allow container to fill width */
+            }
+
+            .header .name { font-size: 1.8em; margin-bottom: 5px; }
+            .header .job-title { font-size: 1.1em; margin-bottom: 10px; }
+            .header hr.separator { margin: 15px 0; }
+
+            .contact-info {
+                flex-direction: column; /* Stack contact items */
+                align-items: center; /* Center items when stacked */
+            }
+            .contact-info .contact-item {
+                flex: auto; /* Reset flex basis */
+                width: 100%; /* Take full width */
+                text-align: center; /* Keep text centered or change to left */
+                padding: 5px 0;
+                margin-bottom: 5px;
+            }
+            .contact-info .contact-item:not(:last-child)::after {
+                display: none; /* Remove vertical separators */
+            }
+            .contact-info .contact-item:not(:last-child) {
+                 border-bottom: 1px solid #eee; /* Optional: add horizontal separator */
+            }
+            .contact-info .contact-item:last-child {
+                margin-bottom: 0;
+                 border-bottom: none;
+            }
+
+
+            .section {
+                flex-direction: column; /* Stack title and content */
+                padding-bottom: 15px;
+                margin-bottom: 15px;
+            }
+            .section-title-col {
+                flex: auto; /* Reset flex basis */
+                width: 100%;
+                padding-right: 0;
+                margin-bottom: 8px; /* Space between title and content */
+                font-size: 1.1em; /* Slightly larger title on mobile */
+                text-align: left; /* Or center if preferred */
+                /* border-bottom: 1px solid #ddd; */ /* Optional: line under title */
+                /* padding-bottom: 5px; */
+            }
+            .section-content-col {
+                flex: auto; /* Reset flex basis */
+                width: 100%;
+                padding-left: 0; /* Remove left padding */
+                font-size: 1.0em; /* Relative to new body font size */
+            }
+
+            .skills-columns {
+                column-count: 1; /* Single column for skills */
+            }
+            .skills-list li {
+                margin-bottom: 4px;
+            }
+
+            /* Experience Section Adjustments */
+            .experience-section .section-content-col {
+                 padding-left: 0; /* If section-content-col has global padding-left:0 above */
+            }
+            .experience-timeline {
+                /* Option 1: Hide timeline if too complex for mobile */
+                /* display: none; */
+
+                /* Option 2: Simplify or ensure it doesn't break layout */
+                margin-bottom: 20px; /* More space before stacked entries */
+                height: 15px;
+            }
+            .experience-timeline::before {
+                 left: 2%; width: 96%; /* Make line almost full width */
+            }
+            /* Note: Specific nth-child timeline point positioning might need review
+               if the number of jobs varies significantly and is large.
+               For a few items, it might still look okay. */
+
+
+            .experience-entries {
+                flex-direction: column; /* Stack job entries */
+                text-align: left; /* Align text to left for stacked items */
+                margin-top: 0; /* Remove top margin if timeline is less prominent or hidden */
+            }
+            .experience-entry-col {
+                flex: auto;
+                width: 100%;
+                padding: 0; /* Remove side padding */
+                margin-bottom: 15px; /* Space between stacked jobs */
+                font-size: 0.95em; /* Adjust relative to body font */
+                /* border-bottom: 1px dashed #eee; */ /* Optional: separator */
+                /* padding-bottom: 10px; */
+            }
+            .experience-entry-col:last-child {
+                margin-bottom: 0;
+                /* border-bottom: none; */
+            }
+            .experience-entry-col .year,
+            .experience-entry-col .title,
+            .experience-entry-col .company {
+                display: block; /* Ensure they stack correctly within the entry */
+                text-align: left;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                font-size: 10.5pt; /* Slightly smaller for very small screens */
+            }
+            .resume-container {
+                padding: 15px 10px;
+            }
+            .header .name { font-size: 1.6em; }
+            .header .job-title { font-size: 1.0em; }
+
+            .section-title-col {
+                font-size: 1.05em;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="resume-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="name">{{ name }}</div>
+            {% if job_title %}
+                <div class="job-title">{{ job_title }}</div>
+            {% endif %}
+            <hr class="separator">
+            <div class="contact-info">
+                <div class="contact-item">{% if phone %}{{ phone }}{% else %} {% endif %}</div>
+                <div class="contact-item">{% if email %}<a href="mailto:{{ email }}">{{ email }}</a>{% else %}  {% endif %}</div>
+                <div class="contact-item">{% if location %}{{ location }}{% else %} {% endif %}</div>
+                <!-- Add more items if needed, adjust flex basis or remove items -->
+            </div>
+            <hr class="separator">
+        </div>
+
+        <!-- Objective / Summary Section -->
+        {% if summary %}
+        <div class="section objective-section">
+            <div class="section-title-col">Objective</div>
+            <div class="section-content-col objective-content">
+                 <p>{{ summary | replace('\n', '<br />') | safe }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Education Section -->
+        {% if education and education|length > 0 %}
+        <div class="section education-section">
+            <div class="section-title-col">Education</div>
+            <div class="section-content-col">
+                {% for edu in education %}
+                <div class="education-entry">
+                    <div class="institute">{{ edu.institute_name }}</div>
+                    {% if edu.location %}<div class="location">{{ edu.location }}</div>{% endif %}
+                    <div class="details">{{ edu.qualification }}{% if edu.specialization %} in {{ edu.specialization }}{% endif %}</div>
+                    {% if edu.gpa %}<div class="gpa">GPA {{ edu.gpa }}</div>{% endif %} {# Assumes 'gpa' key exists #}
+                    {% if edu.details and not edu.gpa %} {# Show general details if no specific GPA line #}
+                        <div class="details">{{ edu.details }}</div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Key Skills Section -->
+        {% if skills %}
+        <div class="section skills-section">
+            <div class="section-title-col">Key Skills</div>
+            <div class="section-content-col">
+                <div class="skills-columns">
+                    <ul class="skills-list">
+                        {% for skill in skills.split(',') %}
+                            {% if skill.strip() %}
+                            <li>{{ skill.strip() }}</li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Experience Section -->
+        {% if experience and experience|length > 0 %}
+        <div class="section experience-section">
+            <div class="section-title-col">Experience</div>
+            <div class="section-content-col">
+                {# Optional: Add a general experience summary paragraph here if you have data for it #}
+                {# {% if experience_summary %}
+                    <div class="experience-summary">
+                        <p>{{ experience_summary }}</p>
+                    </div>
+                {% endif %} #}
+
+                {# Timeline Visual - number of points should match number of jobs #}
+                {% if experience|length <= 5 %} {# Limit points for sanity #}
+                <div class="experience-timeline">
+                    {% for exp in experience %}
+                        <span class="timeline-point"></span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+
+                {# Job Entries - Displayed horizontally #}
+                <div class="experience-entries">
+                    {% for exp in experience %}
+                    <div class="experience-entry-col">
+                        <span class="year">{{ exp.year }}</span>
+                        <span class="title">{{ exp.title }}</span>
+                        <span class="company">{{ exp.company }}</span>
+                        {# Note: exp.description is NOT displayed in this template style #}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Communication Section (Example Custom Section) -->
+        {% if communication_highlight %} {# Requires a new variable #}
+        <div class="section communication-section">
+            <div class="section-title-col">Communication</div>
+            <div class="section-content-col text-section-content">
+                <p>{{ communication_highlight }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Leadership Section (Example Custom Section) -->
+        {% if leadership_highlight %} {# Requires a new variable #}
+        <div class="section leadership-section">
+            <div class="section-title-col">Leadership</div>
+            <div class="section-content-col text-section-content">
+                <p>{{ leadership_highlight }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- References Section -->
+        {% if show_references %} {# Requires a boolean variable #}
+        <div class="section references-section">
+            <div class="section-title-col">References</div>
+            <div class="section-content-col text-section-content">
+                 <p>{{ references_text | default('Available upon request.') }}</p> {# Provide default text #}
+            </div>
+        </div>
+        {% endif %}
+
+         {# Add other sections like Projects, Awards similarly if needed #}
+
+    </div> <!-- End Resume Container -->
+</body>
+</html>

@@ -49,12 +49,12 @@
         .entry-header {
             display: flex;
             justify-content: space-between;
-            align-items: baseline; /* Align baseline */
+            align-items: baseline; /* Align baseline for desktop */
             margin-bottom: 1px;
         }
         .entry-company { font-weight: bold; font-size: 1.0em; flex-grow: 1; padding-right: 10px; }
         .entry-meta { text-align: right; flex-shrink: 0; }
-        .entry-location { font-size: 0.9em; color: #333; display: block; }
+        .entry-location { font-size: 0.9em; color: #333; display: block; } /* May not be used in .entry-meta now */
         .entry-date { font-size: 0.9em; color: #333; font-weight: bold; display: block; }
 
         .entry-subtitle { margin-top: 1px; margin-bottom: 5px; }
@@ -109,6 +109,116 @@
         .conditional-section ul { list-style: disc; padding-left: 25px; }
         .conditional-section li::before { content: ""; } /* Remove custom bullet */
 
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            body {
+                font-size: 10pt;
+                line-height: 1.4;
+            }
+            .resume-container {
+                padding: 0.4in 0.5in;
+                min-height: 0;
+            }
+
+            .header-name {
+                font-size: 1.7em;
+                margin-bottom: 3px;
+            }
+            .header-title {
+                font-size: 1.0em;
+                margin-bottom: 6px;
+            }
+            .header-contact {
+                font-size: 0.85em;
+            }
+            .header-contact > span { /* Stack contact items that are spans */
+                display: block;
+                margin-bottom: 2px;
+            }
+            .contact-separator {
+                display: none; /* Hide separators when stacked */
+            }
+
+            .section { margin-bottom: 15px; }
+            .section-title { font-size: 0.95em; }
+            .section-divider { margin-bottom: 10px; }
+
+            .entry { margin-bottom: 15px; }
+            .entry-header {
+                /* display: flex; justify-content: space-between; are inherited */
+                /* NO flex-direction: column; */
+                align-items: flex-start; /* Align tops of company and meta block */
+                margin-bottom: 1px; 
+                flex-wrap: wrap; /* Allow meta to wrap below company on very narrow screens */
+            }
+            .entry-company {
+                font-size: 0.95em; /* Mobile font size adjustment */
+                /* padding-right: 10px; is inherited - good for spacing if on same line */
+                /* flex-grow: 1; is inherited */
+            }
+            .entry-meta {
+                text-align: right; /* Crucial: keep dates on the right */
+                /* flex-shrink: 0; is inherited */
+            }
+            .entry-date {
+                font-size: 0.85em; /* Mobile font size adjustment */
+                /* display: block; is inherited */
+                font-weight: bold; /* Ensure bold as per desktop */
+            }
+            /* .entry-location styles for within .entry-meta are not primary concern now */
+
+
+            .entry-subtitle { margin-bottom: 4px; }
+            .entry-job-title { font-size: 0.9em; }
+
+            .entry-bullets, .additional-info-list {
+                margin-left: 5px; /* Reduce indent */
+            }
+            .entry-bullets li, .additional-info-list li {
+                font-size: 0.9em;
+                padding-left: 15px; /* Adjust space for bullet */
+                margin-bottom: 4px;
+            }
+            .entry-bullets .sub-bullet { margin-left: 15px; padding-left: 12px; }
+
+            .additional-info-list strong {
+                display: block; /* Make label stack above value for clarity */
+                margin-bottom: 1px;
+            }
+            .additional-info-list li { padding-left: 0; } /* Remove padding if strong is display block */
+            .additional-info-list li::before { display: none; } /* Hide bullet if strong is display block */
+
+
+            .conditional-section {
+                margin-top: 15px;
+                padding-top: 12px;
+            }
+            .conditional-section ul { padding-left: 20px; }
+            .conditional-section p, .conditional-section li { font-size: 0.9em; }
+            .conditional-section div[style*="margin-bottom"] { margin-bottom: 8px !important; }
+        }
+
+        @media (max-width: 480px) {
+            body { font-size: 9.5pt; }
+            .resume-container { padding: 0.3in 0.3in; }
+
+            .header-name { font-size: 1.5em; }
+            .header-title { font-size: 0.95em; }
+            .header-contact { font-size: 0.8em; }
+
+            .section-title { font-size: 0.9em; }
+            .entry-company { font-size: 0.9em; }
+            .entry-date { font-size: 0.8em; } /* .entry-location not actively styled here for meta */
+            .entry-job-title { font-size: 0.85em; }
+            .entry-bullets li, .additional-info-list li,
+            .conditional-section p, .conditional-section li { font-size: 0.85em; }
+
+             /* For additional info, can revert to inline if strong stacking is too much */
+            /* .additional-info-list strong { display: inline; margin-bottom: 0; } */
+            /* .additional-info-list li { padding-left: 15px; } */
+            /* .additional-info-list li::before { display: list-item; } */ /* Or block/inline-block */
+        }
+
     </style>
 </head>
 <body>
@@ -121,11 +231,11 @@
             {# Use title from first experience entry if available #}
             {% if experience and experience[0].title %}<h2 class="header-title">{{ experience[0].title }}</h2>{% endif %}
             <p class="header-contact">
-                {% if location %}{{ location }}{% endif %}
+                {% if location %}<span>{{ location }}</span>{% endif %}
                 {% if location and email %}<span class="contact-separator">•</span>{% endif %}
-                {% if email %}<a href="mailto:{{ email }}">{{ email }}</a>{% endif %}
+                {% if email %}<span><a href="mailto:{{ email }}">{{ email }}</a></span>{% endif %}
                 {% if email and phone %}<span class="contact-separator">•</span>{% endif %}
-                {% if phone %}{{ phone }}{% endif %}
+                {% if phone %}<span>{{ phone }}</span>{% endif %}
             </p>
         </div>
 
@@ -138,9 +248,8 @@
                 {% for exp in experience %}
                 <div class="entry">
                      <div class="entry-header">
-                        <span class="entry-company">{{ exp.company }}</span>
+                        <span class="entry-company">{{ exp.company }}{% if exp.location %}, {{ exp.location }}{% endif %}</span>
                         <span class="entry-meta">
-                            {% if exp.location %}<span class="entry-location">{{ exp.location }}</span>{% endif %}
                             {% if exp.year %}<span class="entry-date">{{ exp.year }}</span>{% endif %}
                         </span>
                     </div>
@@ -169,9 +278,8 @@
                 {% for edu in education %}
                 <div class="entry">
                     <div class="entry-header">
-                        <span class="entry-company">{{ edu.institute_name }}</span>
+                        <span class="entry-company">{{ edu.institute_name }}{% if edu.location %}, {{ edu.location }}{% endif %}</span>
                         <span class="entry-meta">
-                             {% if edu.location %}<span class="entry-location">{{ edu.location }}</span>{% endif %}
                              {% if edu.year %}<span class="entry-date">{{ edu.year }}</span>{% endif %}
                         </span>
                     </div>

@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Use the 'job_title' if available, otherwise fallback to a generic title -->
+    <title>{{ name }}'s Resume - {{ job_title | default('Professional Resume') }}</title>
+    <style>
+        /* --- Basic Page Styles --- */
+        body {
+            font-family: Arial, Helvetica, sans-serif; /* Clean sans-serif font */
+            line-height: 1.5;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4; /* Light grey background */
+            color: #333;
+            font-size: 11pt; /* Base font size */
+        }
+        .resume-container {
+            max-width: 8.5in; /* Standard paper width */
+            min-height: 11in; /* Standard paper height */
+            margin: 30px auto;
+            background-color: #fff;
+            padding: 50px 60px; /* Generous padding */
+            border-radius: 0; /* Sharp corners */
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+        }
+
+        /* --- Header Styling --- */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ccc; /* Subtle separator line */
+        }
+        .header .name {
+            font-size: 2.8em; /* Large name */
+            font-weight: normal; /* Lighter weight */
+            margin: 0 0 5px 0;
+            letter-spacing: 4px; /* Added letter spacing */
+            text-transform: uppercase;
+            color: #000;
+        }
+        .header .job-title {
+            font-size: 1.1em;
+            font-weight: normal;
+            color: #555;
+            margin: 0;
+            letter-spacing: 3px; /* Added letter spacing */
+            text-transform: uppercase;
+        }
+
+        /* --- Two-Column Layout --- */
+        .main-content {
+            display: flex;
+            flex-direction: row;
+            gap: 50px; /* Space between columns */
+        }
+        .left-column {
+            flex: 0 0 30%; /* Left column takes ~30% width */
+        }
+        .right-column {
+            flex: 1; /* Right column takes remaining space */
+        }
+
+        /* --- Section Styling --- */
+        .section {
+            margin-bottom: 25px;
+        }
+        .section-title {
+            font-size: 0.9em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #000;
+            margin-bottom: 5px;
+            padding-bottom: 3px;
+            border-bottom: 1px solid #000; /* Black underline for titles */
+            display: inline-block; /* Allow underline to fit content */
+        }
+        .section-content {
+            margin-top: 10px;
+        }
+
+        /* --- Specific Section Content Styling --- */
+
+        /* Contact */
+        .contact-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .contact-list li {
+            margin-bottom: 5px;
+            font-size: 0.95em;
+            word-break: break-word; /* Prevent long emails/urls from overflowing */
+        }
+        .contact-list a {
+            color: #333;
+            text-decoration: none;
+        }
+        .contact-list a:hover {
+            text-decoration: underline;
+        }
+
+        /* Skills */
+        .skills-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .skills-list li {
+            margin-bottom: 5px;
+            font-size: 0.95em;
+        }
+
+        /* Education */
+        .education-entry {
+            margin-bottom: 15px;
+        }
+        .education-entry .institute {
+            font-weight: bold;
+            font-size: 1em;
+            color: #000;
+        }
+        .education-entry .year {
+            font-size: 0.9em;
+            color: #555;
+        }
+        .education-entry .degree {
+            font-size: 0.95em;
+            margin-top: 2px;
+        }
+        .education-entry .details {
+            font-size: 0.9em;
+            color: #444;
+            margin-top: 3px;
+        }
+
+
+        /* Profile (Summary) */
+        .profile-text p {
+            margin: 0;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        /* Experience */
+        .experience-entry {
+            margin-bottom: 20px;
+            page-break-inside: avoid;
+        }
+        .experience-entry .title-company {
+             font-weight: bold;
+             font-size: 1em;
+             color: #000;
+             /* display: block; /* Ensure title is on its own line */
+        }
+         .experience-entry .company { /* Added for potential future use if company is needed */
+             /* font-weight: normal; */
+             /* margin-left: 5px; */
+         }
+        .experience-entry .year {
+            font-size: 0.9em;
+            color: #555;
+            margin-top: 1px; /* Space between title and year */
+            margin-bottom: 5px; /* Space between year and description */
+            display: block;
+        }
+        .experience-entry .description {
+            font-size: 0.95em;
+            line-height: 1.6;
+            margin: 0; /* Reset paragraph margin */
+        }
+         .experience-entry .description ul { /* Style lists within description if used */
+            margin-top: 5px;
+            margin-bottom: 0;
+            padding-left: 20px;
+            list-style: disc;
+         }
+         .experience-entry .description li {
+             margin-bottom: 3px;
+         }
+
+        /* --- Helper --- */
+        a {
+            color: inherit; /* Links inherit text color */
+            text-decoration: none; /* No underlines by default */
+        }
+         a:hover {
+             /* text-decoration: underline; */ /* Optional hover effect */
+         }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+                font-size: 10pt;
+            }
+            .resume-container {
+                margin: 15px auto;
+                padding: 30px 35px;
+                min-height: 0; /* Allow shrinking */
+            }
+
+            .header {
+                margin-bottom: 20px;
+                padding-bottom: 10px;
+            }
+            .header .name {
+                font-size: 2.2em; /* Slightly smaller name */
+                letter-spacing: 2px;
+            }
+            .header .job-title {
+                font-size: 1em; /* Slightly smaller job title */
+                letter-spacing: 2px;
+            }
+
+            .main-content {
+                flex-direction: column; /* Stack columns */
+                gap: 0; /* Remove gap when stacked, sections will have their own margins */
+            }
+            .left-column, .right-column {
+                flex: 1 1 auto; /* Allow columns to take full width */
+            }
+            .left-column {
+                margin-bottom: 20px; /* Space between stacked left and right column content */
+            }
+
+            .section {
+                margin-bottom: 20px;
+            }
+            .section-title {
+                font-size: 0.85em;
+                letter-spacing: 1.5px;
+            }
+            .section-content {
+                margin-top: 8px;
+            }
+
+            /* Adjust font sizes for content */
+            .contact-list li, .skills-list li,
+            .education-entry .year, .education-entry .degree, .education-entry .details,
+            .profile-text p,
+            .experience-entry .year, .experience-entry .description,
+            .experience-entry .description ul {
+                font-size: 0.9em;
+            }
+            .education-entry .institute, .experience-entry .title-company {
+                font-size: 0.95em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
+                font-size: 9.5pt;
+            }
+            .resume-container {
+                padding: 20px 25px;
+                margin: 10px auto;
+            }
+            .header .name {
+                font-size: 1.8em;
+            }
+            .header .job-title {
+                font-size: 0.9em;
+            }
+            .section-title {
+                font-size: 0.8em;
+            }
+
+            /* Further reduce font sizes if needed */
+            .contact-list li, .skills-list li,
+            .education-entry .year, .education-entry .degree, .education-entry .details,
+            .profile-text p,
+            .experience-entry .year, .experience-entry .description,
+            .experience-entry .description ul {
+                font-size: 0.85em;
+            }
+            .education-entry .institute, .experience-entry .title-company {
+                font-size: 0.9em;
+            }
+        }
+
+
+         /* --- Print Optimizations (Optional) --- */
+         @media print {
+            body {
+                background-color: #fff;
+                padding: 0;
+                font-size: 10pt; /* Adjust for print if needed */
+            }
+            .resume-container {
+                box-shadow: none;
+                margin: 0;
+                padding: 40px;
+                border: none;
+                max-width: 100%;
+                min-height: 0;
+            }
+            .main-content {
+                 /* Revert to row for print if desired and space allows, or keep column */
+                /* flex-direction: row; */
+                /* gap: 40px; */
+            }
+             /* .left-column { flex: 0 0 30%; } */ /* Re-enable for print if row layout is used */
+         }
+
+    </style>
+</head>
+<body>
+    <div class="resume-container">
+        <!-- Header -->
+        <div class="header">
+            <h1 class="name">{{ name | upper }}</h1>
+            {% if job_title %}
+            <p class="job-title">{{ job_title | upper }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Main Content (Two Columns) -->
+        <div class="main-content">
+
+            <!-- Left Column -->
+            <div class="left-column">
+
+                <!-- Contact Section -->
+                <div class="section contact-section">
+                    <h2 class="section-title">Contact</h2>
+                    <div class="section-content">
+                        <ul class="contact-list">
+                            {% if phone %}<li>{{ phone }}</li>{% endif %}
+                            {% if email %}<li><a href="mailto:{{ email }}">{{ email }}</a></li>{% endif %}
+                            {% if portfolio %}<li><a href="{{ portfolio }}" target="_blank">{{ portfolio | replace('https://', '') | replace('http://', '') }}</a></li>{% endif %}
+                            {% if linkedin %}<li><a href="{{ linkedin }}" target="_blank">LinkedIn Profile</a></li>{% endif %}
+                            {% if github %}<li><a href="{{ github }}" target="_blank">GitHub Profile</a></li>{% endif %}
+                            {% if location %}<li>{{ location }}</li>{% endif %}
+                            <!-- Add other relevant contact links similarly -->
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Skills Section -->
+                {% if skills %}
+                <div class="section skills-section">
+                    <h2 class="section-title">Skills</h2>
+                    <div class="section-content">
+                        <ul class="skills-list">
+                            {% for skill in skills.split(',') %}
+                                {% if skill.strip() %} {# Ensure empty strings aren't listed #}
+                                <li>{{ skill.strip() }}</li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Education Section -->
+                {% if education and education|length > 0 %}
+                <div class="section education-section">
+                    <h2 class="section-title">Education</h2>
+                    <div class="section-content">
+                        {% for edu in education %}
+                        <div class="education-entry">
+                            <div class="institute">{{ edu.institute_name }}</div>
+                            <div class="year">{{ edu.year }}</div>
+                            <div class="degree">{{ edu.qualification }}{% if edu.specialization %} in {{ edu.specialization }}{% endif %}</div>
+                            {% if edu.location %}
+                                <div class="location" style="font-size: 0.9em; color: #666;">{{ edu.location }}</div> {# Added Location if needed #}
+                            {% endif %}
+                             {% if edu.details %}
+                                <div class="details">{{ edu.details }}</div> {# Added Details if needed #}
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+            </div> <!-- End Left Column -->
+
+            <!-- Right Column -->
+            <div class="right-column">
+
+                <!-- Profile Section -->
+                {% if summary %}
+                <div class="section profile-section">
+                    <h2 class="section-title">Profile</h2>
+                    <div class="section-content profile-text">
+                        <!-- Assuming summary is plain text paragraphs. If it contains HTML/newlines, use safe filter -->
+                        <p>{{ summary | replace('\n', '<br />') | safe }}</p>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Experience Section -->
+                {% if experience and experience|length > 0 %}
+                <div class="section experience-section">
+                    <h2 class="section-title">Experience</h2>
+                    <div class="section-content">
+                        {% for exp in experience %}
+                        <div class="experience-entry">
+                            <div class="title-company">{{ exp.title }}</div>
+                             {# Optional: Add company name if needed, e.g., next to title or below #}
+                             <div class="company" style="font-size:0.95em; font-style: italic; color: #444;">{{ exp.company }}{% if exp.location %} - {{ exp.location }}{% endif %}</div>
+                            <div class="year">{{ exp.year }}</div>
+                            {% if exp.description %}
+                                <div class="description">
+                                    <!-- Assuming description is plain text. Use safe filter if it contains HTML or needs forced breaks -->
+                                     <p>{{ exp.description | replace('\n', '<br />') | safe }}</p>
+                                     {# Or if description should be bullet points:
+                                     <ul>
+                                        {% for point in exp.description.split('\n') %}
+                                            {% if point.strip() %}<li>{{ point.strip() }}</li>{% endif %}
+                                        {% endfor %}
+                                     </ul>
+                                     #}
+                                </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                 <!-- Optional Sections (Add if needed, style similarly) -->
+                 {#
+                 {% if projects and projects|length > 0 %}
+                 <div class="section projects-section">
+                     <h2 class="section-title">Projects</h2>
+                     <div class="section-content">
+                         <!-- Add project loop here -->
+                     </div>
+                 </div>
+                 {% endif %}
+
+                 {% if awards and awards|length > 0 %}
+                 <div class="section awards-section">
+                     <h2 class="section-title">Awards</h2>
+                     <div class="section-content">
+                         <!-- Add awards loop here -->
+                     </div>
+                 </div>
+                 {% endif %}
+                 #}
+
+            </div> <!-- End Right Column -->
+
+        </div> <!-- End Main Content -->
+
+    </div> <!-- End Resume Container -->
+</body>
+</html>

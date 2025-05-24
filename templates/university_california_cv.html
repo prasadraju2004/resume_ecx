@@ -114,21 +114,21 @@
          .keyword-list { padding-left: 15px; margin-top: 5px; }
 
          /* Project Section Specific Styles */
-        .item-line-1 {
+        .item-line-1 { /* This class seems unused with the new project structure, but keep for reference */
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
             margin-bottom: 2px;
         }
-        .item-name {
+        .item-name { /* Used for project name */
             font-weight: bold;
-            font-size: 11pt; /* Match entry-line-1 */
+            font-size: 11pt;
             color: #000;
         }
-        .item-location { /* Used for the [Link] */
-            font-size: 0.9em; /* Slightly smaller link */
+        .item-location { /* Used for the [Link] in projects */
+            font-size: 0.9em;
             text-align: right;
-            color: #444; /* Link color */
+            color: #444;
             flex-shrink: 0;
             padding-left: 10px;
         }
@@ -139,32 +139,32 @@
         .item-location a:hover {
             text-decoration: underline;
         }
-        .item-title { /* Used for Technologies / Project Title */
+        .item-title { /* Used for Technologies */
             font-style: italic;
-            font-size: 10.5pt; /* Match body */
-            display: block;
+            font-size: 10.5pt;
+            display: block; /* Or inline if next to project name */
             margin-top: 1px;
             margin-bottom: 4px;
             color: #222;
         }
-        .item-bullets { /* Use existing bullet-list styling */
+        .item-bullets {
             list-style: none;
-            margin-left: 20px; /* Match bullet-list */
-            margin-top: 5px; /* Match bullet-list */
+            margin-left: 20px;
+            margin-top: 5px;
             padding-left: 0;
-            font-size: 10.5pt; /* Match bullet-list */
+            font-size: 10.5pt;
         }
         .item-bullets li {
-            margin-bottom: 5px; /* Match bullet-list */
+            margin-bottom: 5px;
             position: relative;
-            padding-left: 18px; /* Match bullet-list */
-            line-height: 1.3; /* Match bullet-list */
+            padding-left: 18px;
+            line-height: 1.3;
         }
-        .item-bullets li::before { /* Use existing bullet style */
+        .item-bullets li::before {
             content: "•";
             position: absolute;
             left: 0;
-            top: 1px; /* Match bullet-list */
+            top: 1px;
             font-size: 1.1em;
             color: #000;
         }
@@ -197,6 +197,174 @@
             color: #000;
         }
 
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            body {
+                font-size: 10.5pt; /* Slightly smaller base font */
+                line-height: 1.45;
+            }
+            .cv-container {
+                margin: 0.5in auto;
+                padding: 0 0.5in; /* Reduce side padding/margin */
+            }
+            .cv-header-prepared {
+                text-align: left; /* Align left on mobile */
+                margin-bottom: 15px;
+            }
+            .cv-section-title {
+                font-size: 10.5pt;
+                margin-top: 15px;
+                margin-bottom: 8px;
+            }
+            .cv-subsection-title {
+                font-size: 10pt;
+                margin-left: 0; /* Remove indent */
+                margin-top: 8px;
+                margin-bottom: 6px;
+            }
+
+            /* Contact Info */
+            .contact-info dt {
+                float: none;
+                clear: none;
+                width: auto;
+                text-align: left;
+                font-weight: bold; /* Make label bolder on mobile */
+                padding-right: 0;
+                margin-bottom: 0px;
+            }
+            .contact-info dd {
+                margin-left: 0; /* Remove indent */
+                margin-bottom: 8px; /* Space between dd items */
+                padding-left: 0;
+            }
+            .contact-info dd br {
+                /* display: block; */ /* ensure line breaks are respected */
+            }
+
+
+            /* List Entries (Education, Experience, Awards etc.) */
+            .list-entry {
+                flex-direction: column; /* Stack date and details */
+                padding-left: 0; /* Remove indent */
+                margin-bottom: 8px;
+            }
+            .list-entry-dates {
+                flex-basis: auto; /* Allow date to take natural width */
+                padding-right: 0;
+                margin-bottom: 2px; /* Space between date and details */
+                font-weight: normal; /* Can make it bold if preferred: bold */
+            }
+            .list-entry-details {
+                 /* No specific change needed here if parent is column */
+            }
+            .detail-indent {
+                 margin-left: 10px; /* Reduce sub-indent */
+                 font-size: 9.5pt;
+            }
+
+            /* Numbered Lists (Grants, Publications) */
+            .numbered-list {
+                padding-left: 20px; /* Reduce indent for numbers */
+                margin-left: 0; /* Ensure no double indent */
+            }
+            .numbered-list li {
+                padding-left: 3px; /* Adjust space after number */
+                margin-bottom: 10px;
+            }
+            /* Grant specific sub-headings */
+            .cv-section h4 { /* For Current, Pending, Past in grants */
+                margin-left: 0 !important;
+                font-size: 10pt !important;
+            }
+            .grant-costs, .grants ol li span[style*="margin-left"] {
+                margin-left: 5px !important; /* Reduce indent for grant descriptions */
+            }
+
+
+            /* Keywords List */
+            .keyword-list {
+                padding-left: 0; /* Remove indent */
+            }
+
+            /* Projects / Other Creative Activities */
+            .cv-section div[style*="margin-left: 15px"] { /* Target the project container div */
+                margin-left: 0 !important;
+            }
+            .item-name {
+                font-size: 10.5pt;
+            }
+             /* Project name and link stacking */
+            strong.item-name + br { /* Hide existing br if we stack differently */
+                /* display: none; */
+            }
+            .item-location { /* Project link */
+                display: block; /* Make link take full width below name */
+                text-align: left;
+                padding-left: 0;
+                margin-top: 2px;
+            }
+
+            /* Bullets (General and Item-specific) */
+            .bullet-list, .item-bullets {
+                margin-left: 10px; /* Reduce indent for all bullet lists */
+                font-size: 10pt;
+            }
+            .bullet-list li, .item-bullets li {
+                padding-left: 15px; /* Adjust space for bullet */
+            }
+            /* If used for experience, reset its specific margins */
+            .list-entry-details > ul.bullet-list {
+                margin-left: 0 !important; /* Override previous general bullet-list indent if it's direct child */
+                padding-left: 15px; /* Add padding for bullets themselves */
+            }
+
+
+            /* General paragraph indent */
+            p.entry-detail {
+                 margin-left: 0px; /* Remove indent for general details paragraph */
+            }
+            /* Teaching description reset */
+            .list-entry-details p.entry-detail[style*="margin-left: 0"] {
+                /* Already good, just ensure it applies */
+            }
+            /* Project description paragraph reset */
+            div[style*="margin-left: 0"] > p[style*="margin-left: 0"] {
+                /* Already good */
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                font-size: 10pt; /* Even smaller for very small screens */
+            }
+            .cv-container {
+                padding: 0 0.3in;
+                margin: 0.3in auto;
+            }
+            .cv-header-main {
+                font-size: 11pt;
+            }
+            .cv-section-title {
+                font-size: 10pt;
+            }
+            .cv-subsection-title {
+                font-size: 9.5pt;
+            }
+            .detail-indent {
+                 font-size: 9pt;
+            }
+             .numbered-list {
+                padding-left: 18px;
+            }
+             .bullet-list, .item-bullets {
+                margin-left: 5px;
+                font-size: 9.5pt;
+            }
+            .bullet-list li, .item-bullets li {
+                padding-left: 12px;
+            }
+        }
 
     </style>
 </head>
@@ -204,7 +372,6 @@
     <div class="cv-container">
         <div class="cv-header-title">University of California San Francisco</div>
         <div class="cv-header-main">Curriculum Vitae</div>
-        <div class="cv-header-prepared">Prepared: {{ prepared_date | default("YYYY-MM-DD") }}</div>
 
         <!-- Contact Info -->
         <dl class="contact-info">
@@ -274,8 +441,8 @@
             {% for exp in experience %}
             <div class="list-entry">
                 {% set start_yr = exp.start_date | default(exp.year | default('YYYY')) %}
-                {% set end_yr = exp.end_date | default('Present' if loop.last else start_yr) %}
-                <div class="list-entry-dates">{{ start_yr }}{% if start_yr != end_yr %} – {{ end_yr }}{% endif %}</div>
+                {% set end_yr = exp.end_date | default('Present' if loop.first and (not exp.end_date or exp.end_date | lower == 'present') else (exp.end_date | default(start_yr))) %}
+                <div class="list-entry-dates">{{ start_yr }}{% if start_yr != end_yr and end_yr != 'Present' and end_yr %} – {{ end_yr }}{% elif end_yr == 'Present' %} – Present{% endif %}</div>
                 <div class="list-entry-details">
                      {{ exp.company | default('Institution') }}{% if exp.location %}, {{ exp.location }}{% endif %}<br>
                      {{ exp.title | default(exp.position | default('Position/Title')) }}
@@ -507,7 +674,7 @@
                          {% set display_authors = pub.authors | default('Authors') %}
                          {% if display_authors is string %}
                              {% set author_parts = display_authors.split(',', 1) %}
-                             {% if author_parts[0].strip().startswith('User ') %}
+                             {% if author_parts[0].strip().lower().startswith(name|lower if name else '___nevermatch___') or author_parts[0].strip().lower().startswith('user ') %}
                                  {% set display_authors = name ~ (', ' ~ author_parts[1].strip() if author_parts|length > 1 else '') %}
                              {% endif %}
                          {% endif %}
@@ -539,7 +706,7 @@
                   {% for proj in projects %}
                       <div style="margin-left: 15px; margin-bottom: 8px;">
                           <strong class="item-name">{{ proj.project_name | default(proj.name | default('Project')) }}</strong>
-                          {% if proj.tech %}(<span class="item-title" style="display: inline;">{{ proj.tech|join(', ') }}</span>){% endif %}
+                          {% if proj.tech %}(<span class="item-title" style="display: inline; font-style: normal; font-size: inherit;">{{ proj.tech|join(', ') }}</span>){% endif %}
                           {% if proj.link %} <a href="{{ proj.link }}" target="_blank" class="item-location" style="padding-left: 5px;">[Link]</a>{% endif %}<br>
                           {% if proj.description %}
                             {% if proj.description is iterable and proj.description is not string %}
@@ -565,7 +732,7 @@
         <div class="cv-section">
             <div class="cv-section-title">References</div>
             {% for ref in references %}
-             <div class="list-entry" style="padding-left: 0;">
+             <div class="list-entry" style="padding-left: 0;"> <!-- No date part here, so direct details -->
                  <div class="list-entry-details">
                     <strong>{{ ref.name | default('Name') }}</strong>{% if ref.title %}, {{ ref.title }}{% endif %}<br>
                     {% if ref.affiliation %}{{ ref.affiliation }}<br>{% endif %}

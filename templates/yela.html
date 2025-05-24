@@ -55,6 +55,109 @@
              padding: 0;
         }
 
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            body {
+                font-size: 10pt; /* Slightly smaller base font for mobile */
+                line-height: 1.4;
+            }
+            .resume-container {
+                padding: 0.5in 0.5in; /* Reduce padding */
+                min-height: 0; /* Allow it to shrink */
+            }
+
+            .header-name {
+                font-size: 1.6em; /* Slightly smaller */
+                text-align: center; /* Center on mobile */
+                margin-bottom: 10px;
+            }
+
+            .contact-info {
+                text-align: center; /* Center items */
+                margin-bottom: 20px;
+                font-size: 0.9em;
+            }
+            .contact-info span {
+                display: block; /* Stack items */
+                margin-right: 0;
+                margin-bottom: 5px; /* Add space between stacked items */
+                white-space: normal; /* Allow wrapping for long emails/links if needed */
+            }
+            .contact-info .separator {
+                display: none; /* Hide separators */
+            }
+
+            .section-title {
+                margin-top: 12px;
+                font-size: 0.95em;
+                margin-bottom: 6px;
+            }
+            .summary-text,
+            .entry-sub-line,
+            .entry-detail-line,
+            .entry-bullets li,
+            .string-list-section p {
+                font-size: 0.95em; /* Adjust other text elements proportionally or specifically */
+            }
+
+
+            .entry-line-1 {
+                flex-direction: column; /* Stack left and right parts */
+                align-items: flex-start; /* Align items to the start of the column */
+                margin-bottom: 3px;
+            }
+            .entry-line-1 .left-part {
+                padding-right: 0; /* No need for padding-right when stacked */
+                margin-bottom: 1px; /* Space between left and right part when stacked */
+            }
+            .entry-line-1 .right-part {
+                text-align: left; /* Align date to the left */
+                padding-left: 0; /* No padding needed */
+                font-size: 0.9em; /* Slightly smaller date */
+                margin-top: 0px;
+                color: #333;
+            }
+            /* Specific to experience section job title for mobile */
+            .entry-line-1 .italic-detail {
+                 display: block; /* Make job title appear on a new line under company */
+                 margin-left: 0;
+                 margin-top: 2px;
+                 font-size: 1em; /* Reset to parent size or specific */
+            }
+
+            .entry-sub-line {
+                margin-top: 2px;
+            }
+
+            .entry-bullets {
+                margin-left: 8px; /* Reduce left margin */
+                margin-top: 2px;
+            }
+            .entry-bullets li {
+                padding-left: 10px; /* Adjust padding for bullet */
+                font-size: 0.95em;
+            }
+
+            .entry-link a {
+                font-size: 0.9em;
+                /* If you want link on new line: display: block; margin-left: 0; margin-top: 3px; */
+            }
+        }
+        @media (max-width: 480px) { /* Even smaller screens */
+            .resume-container {
+                padding: 0.3in 0.3in;
+            }
+            body {
+                font-size: 9.5pt;
+            }
+             .header-name {
+                font-size: 1.4em;
+            }
+            .contact-info {
+                font-size: 0.85em;
+            }
+        }
+
     </style>
 </head>
 <body>

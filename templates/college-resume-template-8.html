@@ -19,13 +19,13 @@
             margin: 0 auto;
             padding: 0.6in 0.75in; /* Adjust padding */
         }
-        a { color: #0000EE; text-decoration: none; }
+        a { color: #0000EE; text-decoration: none; word-break: break-all; }
         a:hover { text-decoration: underline; }
 
         /* --- Header --- */
         .header { text-align: center; margin-bottom: 20px; }
-        .header-name { font-size: 1.8em; font-weight: bold; margin-bottom: 5px; }
-        .header-contact { font-size: 0.9em; color: #333; line-height: 1.3; }
+        .header-name { font-size: 1.8em; font-weight: bold; margin-bottom: 5px; word-break: break-word; }
+        .header-contact { font-size: 0.9em; color: #333; line-height: 1.3; word-break: break-word; }
         .contact-separator { margin: 0 5px; }
 
         /* --- Section --- */
@@ -34,6 +34,7 @@
             font-size: 0.9em; font-weight: bold; text-transform: uppercase;
             letter-spacing: 1px;
             margin-bottom: 2px;
+            word-break: break-word;
         }
         .section-divider {
             border: none; border-top: 1.5px solid #000;
@@ -49,9 +50,9 @@
             align-items: flex-start; /* Align top */
             margin-bottom: 1px; /* Reduced space */
         }
-        .entry-main-info { flex-grow: 1; padding-right: 15px; }
-        .entry-main-info .line1 { font-weight: bold; font-size: 0.95em; } /* Institute/Company/Project Group */
-        .entry-main-info .line2 { font-style: italic; font-size: 0.95em; margin-top: 1px; } /* Degree/Title/Specific Project */
+        .entry-main-info { flex-grow: 1; padding-right: 15px; min-width: 0; /* Allows shrinking and content wrapping */ }
+        .entry-main-info .line1 { font-weight: bold; font-size: 0.95em; word-break: break-word; } /* Institute/Company/Project Group */
+        .entry-main-info .line2 { font-style: italic; font-size: 0.95em; margin-top: 1px; word-break: break-word; } /* Degree/Title/Specific Project */
         .entry-date {
             flex-shrink: 0;
             font-size: 0.9em;
@@ -65,25 +66,120 @@
             margin-top: 4px;
             font-size: 0.95em;
             color: #333;
+            word-break: break-word;
         }
         .entry-details ul { list-style: none; padding-left: 0; }
-        .entry-details li { margin-bottom: 3px; line-height: 1.35; }
+        .entry-details li { margin-bottom: 3px; line-height: 1.35; word-break: break-word; }
         /* No explicit bullets shown in image for details, using simple list */
 
         /* --- Skills Specific --- */
         .skills-section p {
-             font-size: 0.95em; margin-bottom: 4px; padding-left: 5px;
+             font-size: 0.95em; margin-bottom: 4px; padding-left: 5px; word-break: break-word;
         }
-        .skills-section .skill-category { display: inline-block; width: 80px; /* Adjust width as needed */ }
+        .skills-section .skill-category { display: inline-block; width: 80px; /* Adjust width as needed */ font-weight: bold; }
 
         /* --- Interests Specific --- */
-        .interests-section p { font-size: 0.95em; padding-left: 5px; }
+        .interests-section p { font-size: 0.95em; padding-left: 5px; word-break: break-word; }
 
         /* --- Conditionally Added Sections --- */
         .conditional-section { margin-top: 18px; border-top: 1px dashed #ccc; padding-top: 15px; }
         .conditional-section .section-title { font-style: italic; }
         .conditional-section ul { list-style: disc; padding-left: 25px; }
+        .conditional-section li { word-break: break-word; }
 
+
+        /* --- Print Optimizations --- */
+        @media print {
+            body { background-color: #fff; font-size: 9.5pt; }
+            .resume-container { box-shadow: none; margin: 0; padding: 0.5in; border: none; max-width: 100%; min-height: auto;}
+        }
+
+
+        /* --- Mobile Responsive Adjustments (Conservative Structure Preservation) --- */
+        @media (max-width: 768px) {
+            body {
+                font-size: 11.5pt; /* Increased base font for mobile */
+                line-height: 1.45; /* Adjusted for new font size */
+                -webkit-text-size-adjust: 100%;
+                text-size-adjust: 100%;
+            }
+            .resume-container {
+                padding: 0.4in 0.3in; /* Reduced overall padding */
+                max-width: 100%;
+                min-height: auto;
+            }
+
+            /* Header font sizes use 'em', will scale. Contact separator might need attention if wrapping is severe. */
+            .header-contact { line-height: 1.4; }
+            .contact-separator { margin: 0 3px; } /* Slightly reduce space around separator */
+
+            /* Section title font size uses 'em', will scale. */
+            .section-divider { margin-bottom: 10px; }
+
+            /* Education, Experience, Project Entries */
+            .entry { margin-bottom: 12px; }
+            .entry-main-info { padding-right: 10px; /* Reduce gap before date */ }
+            .entry-date {
+                font-size: 0.85em;   /* Slightly smaller date text relative to new body font */
+                white-space: normal; /* Allow date to wrap if necessary */
+                padding-top: 0;      /* May not need specific padding-top with larger fonts */
+            }
+            .entry-details {
+                padding-left: 20px; /* Slightly reduce indent for details */
+                margin-top: 5px;
+            }
+            .entry-details li { margin-bottom: 4px; }
+
+
+            /* Skills Specific */
+            .skills-section p {
+                padding-left: 3px; /* Slightly reduce padding */
+                margin-bottom: 5px;
+            }
+            .skills-section .skill-category {
+                width: 75px; /* Slightly reduce fixed width */
+                /* Consider 'min-width' and 'padding-right' if this still causes issues */
+            }
+
+            /* Interests Specific */
+            .interests-section p {
+                padding-left: 3px; /* Match skills section */
+            }
+
+            /* Conditional Sections */
+            .conditional-section ul {
+                padding-left: 22px; /* Slightly reduce disc bullet indent */
+            }
+        }
+
+        @media (max-width: 480px) { /* Fine-tuning for very small screens */
+            body {
+                font-size: 11pt; /* Slightly smaller if 11.5pt is too large */
+            }
+            .resume-container {
+                padding: 0.3in 0.2in; /* Further reduce padding */
+            }
+
+            .entry-main-info { padding-right: 8px; }
+            .entry-date { font-size: 0.8em; }
+            .entry-details { padding-left: 18px; }
+
+            .skills-section .skill-category {
+                width: auto; /* Let it take natural width */
+                padding-right: 5px; /* Add space after category */
+                /* Alternatively, stack them:
+                display: block;
+                margin-bottom: 2px; */
+            }
+             .skills-section p { padding-left: 0; }
+
+
+            .interests-section p { padding-left: 0; }
+
+            .conditional-section ul {
+                padding-left: 20px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -94,7 +190,7 @@
         <div class="header">
             {% if name %}<h1 class="header-name">{{ name }}</h1>{% endif %}
             <div class="header-contact">
-                {% if location %}{{ location }}{% endif %} {# Assume location is pre-formatted string #}
+                {% if location %}{{ location }}{% endif %}
                 {% if location and email %}<span class="contact-separator">|</span>{% endif %}
                 {% if email %}<a href="mailto:{{ email }}">{{ email }}</a>{% endif %}
                 {% if email and phone %}<span class="contact-separator">|</span>{% endif %}
@@ -119,8 +215,7 @@
                     </div>
                     {% if edu.details %}
                     <div class="entry-details">
-                        {# Display details directly, assuming pre-formatted or single line #}
-                        <p><em>Relevant Coursework:</em> {{ edu.details }}</p> {# Mimic image label #}
+                        <p><em>Relevant Coursework:</em> {{ edu.details }}</p>
                     </div>
                     {% endif %}
                 </div>
@@ -139,17 +234,13 @@
                 <div class="entry">
                      <div class="entry-header">
                         <div class="entry-main-info">
-                            {# Assuming proj.project_name is the group/context like 'Smith College...' #}
                             <p class="line1">{{ proj.project_name }}</p>
-                            {# Assuming proj.title is the specific paper/project title #}
                             <p class="line2">{{ proj.title }}</p>
                         </div>
-                        {# No date shown for projects in example, but add if available #}
-                        {# {% if proj.year %}<span class="entry-date">{{ proj.year }}</span>{% endif %} #}
                     </div>
                     {% if proj.description %}
                     <div class="entry-details">
-                         <ul><li>{{ proj.description }}</li></ul> {# Simple list format #}
+                         <ul><li>{{ proj.description }}</li></ul>
                     </div>
                     {% endif %}
                      {% if proj.tech and proj.tech|length > 0 %}
@@ -162,8 +253,6 @@
             </div>
         </div>
         {% endif %}
-
-        {# Leadership section omitted - no corresponding data structure #}
 
         <!-- Work Experience -->
         {% if experience and experience|length > 0 %}
@@ -182,7 +271,7 @@
                     </div>
                     {% if exp.description %}
                     <div class="entry-details">
-                        <ul><li>{{ exp.description }}</li></ul> {# Simple list format #}
+                        <ul><li>{{ exp.description }}</li></ul>
                     </div>
                     {% endif %}
                 </div>
@@ -198,11 +287,10 @@
             <hr class="section-divider">
             <div class="section-content">
                 {% if languages %}
-                    <p><span class="skill-category">Language:</span>{{ languages }}</p>
+                    <p><span class="skill-category">Language:</span> {{ languages }}</p>
                 {% endif %}
                 {% if skills %}
-                    {# Assume 'skills' contains Application/Technical skills #}
-                    <p><span class="skill-category">Application:</span>{{ skills.split(',') | join(', ') }}</p>
+                    <p><span class="skill-category">Application:</span> {{ skills.split(',') | join(', ') }}</p>
                 {% endif %}
             </div>
         </div>
@@ -221,8 +309,6 @@
 
 
         <!-- Conditionally Added Sections for Data Compatibility -->
-
-        <!-- Summary/Profile -->
         {% if summary %}
         <div class="section conditional-section">
             <h2 class="section-title">Profile</h2>
@@ -232,7 +318,6 @@
         </div>
         {% endif %}
 
-        <!-- Awards -->
         {% if awards and awards|length > 0 %}
         <div class="section conditional-section">
             <h2 class="section-title">Awards</h2>
@@ -250,7 +335,6 @@
         </div>
         {% endif %}
 
-        <!-- Links -->
         {% if linkedin or github or portfolio %}
         <div class="section conditional-section">
             <h2 class="section-title">Online Profiles</h2>

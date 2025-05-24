@@ -87,6 +87,108 @@
         /* --- Footer --- */
         .footer { margin-top: 30px; text-align: center; font-size: 0.8em; color: #aaa; }
 
+        /* --- Mobile Responsive Adjustments --- */
+        @media (max-width: 600px) {
+            body {
+                font-size: 9pt; /* Slightly smaller base font for mobile, affects all em units */
+                line-height: 1.4;
+            }
+
+            .resume-container {
+                padding: 20px 15px; /* Use px for more predictable spacing on mobile */
+                min-height: auto; /* Allow container to be smaller than 10in */
+                max-width: 100%;  /* Ensure it doesn't exceed screen width */
+            }
+
+            /* --- Header --- */
+            .header {
+                text-align: left; /* Align name and contact block to the left */
+                margin-bottom: 20px;
+            }
+            .header-name {
+                font-size: 2.4em; /* Adjusted for smaller base font */
+                margin-bottom: 10px; /* Space between name and contact info */
+            }
+            .header-contact {
+                flex-direction: column;   /* Stack contact items vertically */
+                align-items: flex-start; /* Align items to the left */
+                gap: 5px;                /* Reduce gap for vertical stacking */
+                font-size: 1em; /* Relative to new body font size (so, 9pt) */
+            }
+            .contact-item .icon {
+                margin-right: 5px; /* Ensure consistent icon spacing */
+            }
+
+            /* --- Summary --- */
+            .summary-section {
+                text-align: left;   /* Left-align summary text */
+                padding: 0;         /* Remove horizontal padding */
+                font-size: 1em;     /* Relative to new body font size (so, 9pt) */
+            }
+
+            /* --- Section --- */
+            .section {
+                margin-bottom: 15px;
+            }
+            .section-title {
+                /* font-size: 0.9em; (0.9 * 9pt = 8.1pt) */
+                letter-spacing: 1.5px; /* Slightly reduce letter spacing */
+                padding-top: 5px;
+                margin-bottom: 10px;
+            }
+
+            /* --- Experience, Education, Project Entries --- */
+            .entry-item {
+                margin-bottom: 15px;
+            }
+            /* .entry-title { font-size: 1.15em; (1.15 * 9pt = 10.35pt) } */
+            /* .entry-subtitle { font-size: 1.0em; (1.0 * 9pt = 9pt) } */
+            .entry-meta {
+                flex-direction: column; /* Stack meta items (date, location) vertically */
+                align-items: flex-start; /* Align them to the left */
+                gap: 3px; /* Reduce gap for vertical stacking */
+                margin-bottom: 8px;
+                font-size: 0.9em; /* Adjusted for readability (0.9 * 9pt = 8.1pt) */
+            }
+            .entry-bullets {
+                margin-left: 18px; /* Slightly reduce bullet indentation */
+                /* font-size: 0.95em; (0.95 * 9pt = 8.55pt) */
+            }
+            .entry-bullets li {
+                margin-bottom: 3px;
+            }
+            /* .project-tech { font-size: 0.9em; (0.9 * 9pt = 8.1pt) } */
+
+            /* --- Key Achievements --- */
+            .achievements-container {
+                grid-template-columns: 1fr; /* Force single column for achievements */
+                gap: 10px;
+            }
+            /* .achievement-icon { font-size: 1.4em; (1.4 * 9pt = 12.6pt) } */
+            /* .achievement-title { font-size: 0.95em; (0.95 * 9pt = 8.55pt) } */
+            /* .achievement-details { font-size: 0.9em; (0.9 * 9pt = 8.1pt) } */
+
+            /* --- Skills --- */
+            .skills-container {
+                gap: 6px;
+            }
+            .skill-tag {
+                /* font-size: 0.9em; (0.9 * 9pt = 8.1pt) */
+                padding: 3px 8px;
+            }
+
+            /* --- Simple List Items (Awards, Languages, Interests) --- */
+            /* .simple-list-item { font-size: 0.95em; (0.95 * 9pt = 8.55pt) } */
+            /* For simple <p> tags like in Languages/Interests, they will wrap naturally and adopt body font size or their specific styles */
+
+            /* --- Footer --- */
+            .footer {
+                text-align: left; /* Align footer to the left */
+                margin-top: 20px;
+                /* font-size: 0.8em; (0.8 * 9pt = 7.2pt) */
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -94,286 +196,150 @@
     <div class="resume-container">
 
         <!-- Header -->
-
         <div class="header">
-
             {% if name %}<h1 class="header-name">{{ name }}</h1>{% endif %}
-
             <div class="header-contact">
-
                 {% if phone %}<span class="contact-item"><span class="icon">📞</span>{{ phone }}</span>{% endif %}
-
                 {% if location %}<span class="contact-item"><span class="icon">📍</span>{{ location }}</span>{% endif %}
-
                 {% if email %}<span class="contact-item"><span class="icon">📧</span><a href="mailto:{{ email }}">{{ email }}</a></span>{% endif %}
-
                 {% if linkedin %}<span class="contact-item"><span class="icon">🔗</span><a href="{{ linkedin }}" target="_blank">LinkedIn</a></span>{% endif %}
-
                 {% if github %}<span class="contact-item"><span class="icon">🔗</span><a href="{{ github }}" target="_blank">GitHub</a></span>{% endif %}
-
                 {% if portfolio %}<span class="contact-item"><span class="icon">🔗</span><a href="{{ portfolio }}" target="_blank">Portfolio</a></span>{% endif %}
-
             </div>
-
         </div>
-
 
         <!-- Summary -->
-
         {% if summary %}
-
         <div class="section">
-
             <h3 class="section-title">Summary</h3>
-
             <div class="summary-section">
-
                 {{ summary }}
-
             </div>
-
         </div>
-
         {% endif %}
-
 
         <!-- Education -->
-
         {% if education and education|length > 0 %}
-
         <div class="section">
-
             <h3 class="section-title">Education</h3>
-
             {% for edu in education %}
-
             <div class="entry-item">
-
                 {% if edu.qualification %}<h4 class="entry-title">{{ edu.qualification }} {{ edu.specialization }}</h4>{% endif %}
-
                 {% if edu.institute_name %}<p class="entry-subtitle">{{ edu.institute_name }}</p>{% endif %}
-
                 <div class="entry-meta">
-
                     {% if edu.year %}<span class="meta-item"><span class="icon">🗓</span>{{ edu.year }}</span>{% endif %}
-
                     {% if edu.location %}<span class="meta-item"><span class="icon">📍</span>{{ edu.location }}</span>{% endif %}
-
                 </div>
-
                 {% if edu.details %}
-
                 <ul class="entry-bullets">
-
                     <li>{{ edu.details }}</li>
-
                 </ul>
-
                 {% endif %}
-
             </div>
-
             {% endfor %}
-
         </div>
-
         {% endif %}
-
 
         <!-- Experience -->
-
         {% if experience and experience|length > 0 %}
-
         <div class="section">
-
             <h3 class="section-title">Experience</h3>
-
             {% for exp in experience %}
-
             <div class="entry-item">
-
                 {% if exp.title %}<h4 class="entry-title">{{ exp.title }}</h4>{% endif %}
-
                 {% if exp.company %}<p class="entry-subtitle">{{ exp.company }}</p>{% endif %}
-
                 <div class="entry-meta">
-
                     {% if exp.year %}<span class="meta-item"><span class="icon">🗓</span>{{ exp.year }}</span>{% endif %}
-
                     {% if exp.location %}<span class="meta-item"><span class="icon">📍</span>{{ exp.location }}</span>{% endif %}
-
                 </div>
-
                 {% if exp.description %}
-
                 <ul class="entry-bullets">
-
                     <li>{{ exp.description }}</li>
-
                 </ul>
-
                 {% endif %}
-
             </div>
-
             {% endfor %}
-
         </div>
-
         {% endif %}
-
 
         <!-- Projects -->
-
         {% if projects and projects|length > 0 %}
-
         <div class="section">
-
             <h3 class="section-title">Projects</h3>
-
             {% for proj in projects %}
-
             <div class="entry-item">
-
                 {% if proj.project_name %}<h4 class="entry-title">{{ proj.project_name }}</h4>{% endif %}
-
                 <div class="entry-meta">
-
                     {% if proj.link %}<span class="meta-item"><span class="icon">🔗</span><a href="{{ proj.link }}" target="_blank">Link</a></span>{% endif %}
-
                 </div>
-
                 {% if proj.title %}<p class="entry-subtitle">{{ proj.title }}</p>{% endif %}
-
                 {% if proj.tech and proj.tech|length > 0 %}
-
                 <p class="project-tech">Technologies: {{ proj.tech|join(', ') }}</p>
-
                 {% endif %}
-
                 {% if proj.description %}
-
                 <ul class="entry-bullets">
-
                     <li>{{ proj.description }}</li>
-
                 </ul>
-
                 {% endif %}
-
             </div>
-
             {% endfor %}
-
         </div>
-
         {% endif %}
-
 
         <!-- Skills -->
-
         {% if skills %}
-
         <div class="section">
-
             <h3 class="section-title">Skills</h3>
-
             <div class="skills-container">
-
                 {% for skill in skills.split(',') %}
-
                     <span class="skill-tag">{{ skill.strip() }}</span>
-
                 {% endfor %}
-
             </div>
-
         </div>
-
         {% endif %}
-
 
         <!-- Awards -->
-
         {% if awards and awards|length > 0 %}
-
         <div class="section">
-
             <h3 class="section-title">Awards</h3>
-
             <div class="simple-list-section">
-
                 {% for award in awards %}
-
                 <div class="simple-list-item">
-
                     {{ award.title }}
-
                     {%- if award.issuer %}, {{ award.issuer }}{% endif %}
-
                     {%- if award.year %} ({{ award.year }}){% endif -%}
-
                 </div>
-
                 {% endfor %}
-
             </div>
-
         </div>
-
         {% endif %}
-
 
         <!-- Languages -->
-
         {% if languages %}
-
         <div class="section">
-
             <h3 class="section-title">Languages</h3>
-
             <div class="simple-list-section">
-
                 <p>{{ languages }}</p>
-
             </div>
-
         </div>
-
         {% endif %}
-
 
         <!-- Interests -->
-
         {% if interests %}
-
         <div class="section">
-
             <h3 class="section-title">Interests</h3>
-
             <div class="simple-list-section">
-
                 <p>{{ interests }}</p>
-
             </div>
-
         </div>
-
         {% endif %}
-
 
         <!-- Footer -->
-
         {% if portfolio %}
-
         <div class="footer">
-
             <a href="{{ portfolio }}" target="_blank">{{ portfolio }}</a>
-
         </div>
-
         {% endif %}
-
 
     </div>
 

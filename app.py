@@ -15,7 +15,6 @@ mongo = PyMongo(app)
 
 @app.route('/')
 def hello_world():
-    # Update links to use the new download endpoint
     return '''
         <h1>Resume/CV Generator</h1>
         <h2>View HTML:</h2>

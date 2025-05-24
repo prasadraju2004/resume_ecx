@@ -3,129 +3,135 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Title could also be dynamic: <title>{{ name }}'s Resume</title> -->
-    <title>Example Resume</title>
-    <!-- Note: html2pdf.js is for client-side generation. -->
-    <!-- If rendering server-side (e.g., Flask/Django), PDF generation would be handled differently. -->
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
-
+    <title>{% if name %}{{ name }}'s Resume{% else %}Resume Preview{% endif %}</title>
     <style>
-      /* --- Basic Page Styles --- */
+      :root {
+        --primary-text-color: #000000;
+        --secondary-text-color: #333333;
+        --muted-text-color: #555555;
+        --link-color: #007bff; /* Standard blue for links */
+        --border-color: #cccccc;
+        --background-page: #f4f4f4; /* Light gray for the page background */
+        --background-resume: #ffffff;
+
+        --font-main: "Times New Roman", Times, serif;
+        --font-ui: Arial, sans-serif;
+
+        --base-font-size-resume: 11pt;
+        --line-height-resume: 1.4;
+      }
+
       body {
-        font-family: Arial, sans-serif;
+        font-family: var(--font-ui);
         line-height: 1.5;
         margin: 0;
         padding: 20px;
-        background-color: #f0f0f0;
-        color: #333;
-      }
-      .container {
-        max-width: 900px;
-        margin: 20px auto;
-        background-color: #fff;
-        padding: 30px;
-        border-radius: 5px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        text-align: center;
-      }
-      h1 {
-        color: #333;
-        border-bottom: none;
-        margin-bottom: 20px;
-      }
-      /* Styles for potential control buttons (not part of resume content itself) */
-      .control-button {
-        background-color: #007bff;
-        color: white;
-        border: none;
-        padding: 12px 25px;
-        border-radius: 3px;
-        cursor: pointer;
-        margin-top: 10px;
-        font-size: 1.1em;
-        transition: background-color 0.2s ease;
-      }
-      .control-button:hover {
-        background-color: #0056b3;
+        background-color: var(--background-page);
+        color: var(--primary-text-color);
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Center the resume block */
       }
 
-      /* --- RESUME OUTPUT STYLING (Same as original) --- */
+      /* --- RESUME OUTPUT STYLING --- */
       #resume-output {
-        border: 1px solid #ccc;
-        padding: 40px;
-        background: white;
-        font-family: "Times New Roman", Times, serif;
-        color: black;
-        max-width: 8.5in;
-        margin: 20px auto;
+        border: 1px solid var(--border-color);
+        padding: 35px 40px;
+        background: var(--background-resume);
+        font-family: var(--font-main);
+        color: var(--primary-text-color);
+        width: 100%; /* Start with full width */
+        max-width: 8.5in; /* Paper-like width */
+        min-height: 10in; /* Suggest paper height */
         box-sizing: border-box;
-        text-align: left; /* Ensure content inside is left-aligned */
+        text-align: left;
+        font-size: var(--base-font-size-resume);
+        line-height: var(--line-height-resume);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for the resume sheet */
+        margin-top: 20px; /* Space from top of viewport */
       }
+
       #resume-output h1.name {
         text-align: center;
-        margin: 0;
-        padding-bottom: 5px;
-        font-size: 2.2em;
+        margin: 0 0 15px 0; /* Increased bottom margin */
+        font-size: 2.5em; /* Slightly larger */
         font-weight: bold;
-        border-bottom: none;
       }
+
       #resume-output .contact-info {
         text-align: center;
-        font-size: 0.9em;
-        margin-bottom: 25px;
-        color: #333;
+        font-size: 0.95em; /* Adjusted for clarity */
+        margin-bottom: 30px;
+        color: var(--secondary-text-color);
+        line-height: 1.6;
       }
-      #resume-output .contact-info span {
-        margin: 0 5px;
-        white-space: nowrap;
+      #resume-output .contact-info .contact-item {
+        display: block; /* Stack each item */
+        margin-bottom: 2px; /* Small space between stacked items */
       }
-      #resume-output .contact-info span::after {
-        content: "•";
-        margin-left: 10px;
-        color: #888;
+      #resume-output .contact-info a {
+        color: var(--link-color); /* Blue links as in image */
+        text-decoration: none;
       }
-      #resume-output .contact-info span:last-child::after {
-        content: "";
-        margin-left: 0;
+      #resume-output .contact-info a:hover {
+        text-decoration: underline;
       }
+      /* Email specific color if needed (image shows black) */
+      #resume-output .contact-info .contact-item a[href^="mailto:"] {
+          color: var(--primary-text-color);
+      }
+
+
       #resume-output h2.section-title {
-        font-size: 1.1em;
+        font-size: 1.1em; /* Adjusted size */
         font-weight: bold;
         text-transform: uppercase;
-        border-bottom: 1px solid #000;
-        padding-bottom: 2px;
-        margin-top: 15px;
-        margin-bottom: 10px;
+        border-bottom: 1.5px solid var(--primary-text-color); /* Thicker line */
+        padding-bottom: 3px;
+        margin-top: 20px;
+        margin-bottom: 12px;
         page-break-after: avoid;
+        text-align: left; /* <<< Changed to left-aligned */
+        letter-spacing: 0.5px;
       }
+
       #resume-output .section-content {
-        margin-bottom: 15px;
+        margin-bottom: 18px;
       }
       #resume-output .entry-item {
-        margin-bottom: 12px;
+        margin-bottom: 14px;
         page-break-inside: avoid;
       }
-      #resume-output .entry-line1 {
-        display: flex;
-        justify-content: space-between;
-        font-weight: bold;
-        font-size: 1.05em;
-        margin-bottom: 2px;
-      }
+      #resume-output .entry-line1,
       #resume-output .entry-line2 {
         display: flex;
         justify-content: space-between;
-        font-style: italic;
-        color: #444;
-        margin-bottom: 4px;
-        font-size: 1em;
+        align-items: flex-start;
       }
+      #resume-output .entry-line1 {
+        font-weight: bold;
+        font-size: 1.0em; /* Adjusted relative to base */
+        margin-bottom: 2px;
+      }
+      #resume-output .entry-line2 {
+        font-style: italic;
+        color: var(--muted-text-color);
+        margin-bottom: 4px;
+        font-size: 0.95em; /* Adjusted relative */
+      }
+      #resume-output .entry-line1 > span:last-child,
+      #resume-output .entry-line2 > span:last-child {
+        text-align: right;
+        flex-shrink: 0;
+        padding-left: 10px;
+      }
+
       #resume-output .entry-description {
-        margin-left: 15px;
+        margin-left: 20px;
         padding-left: 0;
         list-style: disc;
-        font-size: 1em;
-        line-height: 1.4;
+        font-size: 1em; /* Adjusted relative */
+        color: var(--secondary-text-color);
       }
       #resume-output .entry-description li {
         margin-bottom: 3px;
@@ -134,209 +140,263 @@
         padding: 0;
         margin: 0;
         list-style: none;
+        line-height: 1.5;
       }
       #resume-output .simple-list li {
         display: inline;
-        margin-right: 5px;
-        font-size: 1em;
+        margin-right: 3px;
+        font-size: 1em; /* Adjusted relative */
+        color: var(--secondary-text-color);
       }
-      /* Note: The CSS below handles the comma separation for simple-list */
       #resume-output .simple-list li:not(:last-child)::after {
         content: ", ";
+        margin-right: 2px;
       }
       #resume-output .summary-text p {
-        margin: 5px 0;
-        font-size: 1em;
+        margin: 0 0 5px 0;
+        font-size: 1em; /* Adjusted relative */
+        color: var(--secondary-text-color);
       }
-      #resume-output a {
-        color: #000;
-        text-decoration: none;
-      }
-      #resume-output a:hover {
-        text-decoration: none;
+
+      /* Mobile Responsive Adjustments */
+      @media (max-width: 768px) {
+        body {
+          padding: 10px; /* Reduce body padding on mobile */
+        }
+        #resume-output {
+          padding: 20px 25px;
+          font-size: 10pt; /* Slightly smaller base for mobile resume */
+          margin-top: 10px;
+          width: auto; /* Allow it to shrink from 8.5in */
+          max-width: calc(100% - 20px); /* Full width minus some small margin */
+        }
+        #resume-output h1.name {
+          font-size: 2em;
+          margin-bottom: 10px;
+        }
+        #resume-output .contact-info {
+          font-size: 0.9em; /* Adjusted */
+          margin-bottom: 20px;
+        }
+        /* .contact-item is already display: block, so stacking is handled */
+
+        #resume-output h2.section-title {
+          font-size: 1.05em; /* Slightly smaller section titles */
+          margin-top: 15px;
+          margin-bottom: 8px;
+        }
+
+        /* Make entry lines stack their content on mobile */
+        #resume-output .entry-line1,
+        #resume-output .entry-line2 {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        #resume-output .entry-line1 > span,
+        #resume-output .entry-line2 > span {
+          width: 100%;
+          text-align: left;
+          padding-left: 0;
+        }
+        #resume-output .entry-line1 > span:last-child, /* e.g., year */
+        #resume-output .entry-line2 > span:last-child { /* e.g., location */
+           margin-top: 0px; /* Adjust if needed, for space after first item */
+        }
+        #resume-output .entry-line1 {
+            font-size: 0.95em;
+        }
+        #resume-output .entry-line2 {
+            font-size: 0.9em;
+            margin-bottom: 3px;
+        }
+
+        #resume-output .entry-description {
+          margin-left: 15px; /* Slightly reduce indent */
+          font-size: 0.95em;
+        }
+        #resume-output .simple-list li,
+        #resume-output .summary-text p {
+          font-size: 0.95em;
+        }
       }
     </style>
   </head>
   <body>
-    <div class="container">
-      <h1>Resume Generator Preview</h1>
-      <!-- Optional: Add controls relevant to server-side rendering context -->
-      <!-- <button class="control-button">Download PDF (Server-side)</button> -->
+    <!-- The outer "page-container" div and its H1 are removed to get rid of "Resume Generator Preview" -->
+    <!-- The #resume-output div is now the direct child for styling -->
 
-      <!-- Start of Templated Resume Content -->
-      <div id="resume-output">
-        <!-- Header -->
-        <h1 class="name">{{ name }}</h1>
-        <div class="contact-info">
-          {% if location %}<span>{{ location }}</span>{% endif %} {% if phone
-          %}<span>{{ phone }}</span>{% endif %} {% if email %}<span
-            ><a href="mailto:{{ email }}">{{ email }}</a></span
-          >{% endif %} {% if linkedin %}<span
-            ><a href="{{ linkedin }}" target="_blank">LinkedIn</a></span
-          >{% endif %} {% if github %}<span
-            ><a href="{{ github }}" target="_blank">GitHub</a></span
-          >{% endif %} {% if portfolio %}<span
-            ><a href="{{ portfolio }}" target="_blank">Portfolio</a></span
-          >{% endif %}
-        </div>
-
-        <!-- Summary -->
-        {% if summary %}
-        <h2 class="section-title">Summary</h2>
-        <div class="section-content summary-text">
-          <!-- Use |safe filter if summary contains intentional HTML like <br> -->
-          <!-- For plain text, just {{ summary }} is fine -->
-          <!-- Assuming newlines in JSON should be <br> in HTML like original JS -->
-          <p>{{ summary | replace('\n', '<br />') | safe }}</p>
-        </div>
-        {% endif %}
-
-        <!-- Education -->
-        {% if education and education|length > 0 %}
-        <h2 class="section-title">Education</h2>
-        <div class="section-content">
-          {% for edu in education %}
-          <div class="entry-item">
-            <div class="entry-line1">
-              <span>{{ edu.institute_name }}</span>
-              <span>{{ edu.year }}</span>
-            </div>
-            <div class="entry-line2">
-              <span>{{ edu.qualification }} {{edu.specialization}}</span>
-              <span>{{ edu.location }}</span>
-            </div>
-            {% if edu.details %}
-            <ul class="entry-description">
-              <li>{{ edu.details }}</li>
-            </ul>
-            {% endif %}
-          </div>
-          {% endfor %}
-        </div>
-        {% endif %}
-
-        <!-- Experience -->
-        {% if experience and experience|length > 0 %}
-        <h2 class="section-title">Experience</h2>
-        <div class="section-content">
-          {% for exp in experience %}
-          <div class="entry-item">
-            <div class="entry-line1">
-              <span>{{ exp.company }}</span>
-              <span>{{ exp.year }}</span>
-            </div>
-            <div class="entry-line2">
-              <span>{{ exp.title }}</span>
-              <span>{{ exp.location }}</span>
-            </div>
-            {% if exp.description %}
-            <ul class="entry-description">
-              {% for line in exp.description.split('\n') %} {% set trimmed_line
-              = line.strip() %} {% if trimmed_line %} {# Only include non-empty
-              lines #}
-              <li>{{ trimmed_line }}</li>
-              {% endif %} {% endfor %}
-            </ul>
-            {% endif %}
-          </div>
-          {% endfor %}
-        </div>
-        {% endif %}
-
-        <!-- Projects -->
-        {% if projects and projects|length > 0 %}
-        <h2 class="section-title">Projects</h2>
-        <div class="section-content">
-          {% for proj in projects %}
-          <div class="entry-item">
-            <div class="entry-line1">
-              <span>
-                {% if proj.link %}<a href="{{ proj.link }}" target="_blank"
-                  >{% endif %} {{ proj.project_name }} {% if proj.link %}</a
-                >{% endif %} {% if proj.tech and proj.tech|length > 0 %} ({{
-                proj.tech|join(', ') }}) {% endif %}
-              </span>
-              <span>{{ proj.dates }}</span>
-            </div>
-            {% if proj.description %}
-            <ul class="entry-description">
-              <li>{{ proj.description }}</li>
-              {% if proj.title %}
-              <li>{{ proj.title }}</li>
-              {% endif %}
-            </ul>
-            {% endif %}
-          </div>
-          {% endfor %}
-        </div>
-        {% endif %}
-
-        <!-- Skills -->
-        {% if skills %}
-        <h2 class="section-title">Skills</h2>
-        <div class="section-content">
-          <ul class="simple-list">
-            {% for skill in skills.split(',') %} {% set trimmed_skill =
-            skill.strip() %} {% if trimmed_skill %} {# Avoid empty items if
-            there are extra commas #}
-            <li>{{ trimmed_skill }}</li>
-            {% endif %} {% endfor %}
-          </ul>
-        </div>
-        {% endif %}
-
-        <!-- Languages -->
-        {% if languages %}
-        <h2 class="section-title">Languages</h2>
-        <div class="section-content">
-          <ul class="simple-list">
-            {% for lang in languages.split(',') %} {% set trimmed_lang =
-            lang.strip() %} {% if trimmed_lang %}
-            <li>{{ trimmed_lang }}</li>
-            {% endif %} {% endfor %}
-          </ul>
-        </div>
-        {% endif %}
-
-        <!-- Interests -->
-        {% if interests %}
-        <h2 class="section-title">Interests</h2>
-        <div class="section-content">
-          <ul class="simple-list">
-            {% for interest in interests.split(',') %} {% set trimmed_interest =
-            interest.strip() %} {% if trimmed_interest %}
-            <li>{{ trimmed_interest }}</li>
-            {% endif %} {% endfor %}
-          </ul>
-        </div>
-        {% endif %}
-
-        <!-- Awards -->
-        {% if awards and awards|length > 0 %}
-        <h2 class="section-title">Awards & Honors</h2>
-        <div class="section-content">
-          {% for award in awards %}
-          <div class="entry-item">
-            <div class="entry-line1">
-              <span>{{ award.title }}</span>
-              <span>{{ award.year }}</span>
-            </div>
-            {% if award.issuer %}
-            <div class="entry-line2">
-              <span>{{ award.issuer }}</span>
-              <span></span>
-              <!-- Empty span for alignment -->
-            </div>
-            {% endif %}
-          </div>
-          {% endfor %}
-        </div>
-        {% endif %}
+    <div id="resume-output">
+      <!-- Header -->
+      <h1 class="name">{{ name }}</h1>
+      <div class="contact-info">
+        <!-- Grouping plain text and links for distinct visual stacking if ever needed,
+             but current CSS just makes all .contact-item block -->
+        {% if location %}<span class="contact-item">{{ location }}</span>{% endif %}
+        {% if phone %}<span class="contact-item">{{ phone }}</span>{% endif %}
+        {% if email %}<span class="contact-item"><a href="mailto:{{ email }}">{{ email }}</a></span>{% endif %}
+        {% if linkedin %}<span class="contact-item"><a href="{{ linkedin }}" target="_blank">LinkedIn</a></span>{% endif %}
+        {% if github %}<span class="contact-item"><a href="{{ github }}" target="_blank">GitHub</a></span>{% endif %}
+        {% if portfolio %}<span class="contact-item"><a href="{{ portfolio }}" target="_blank">Portfolio</a></span>{% endif %}
       </div>
-      <!-- /#resume-output -->
-    </div>
-    <!-- /container -->
 
-    <!-- Removed the JavaScript block as data is now expected to be injected via Jinja context -->
+      <!-- Summary -->
+      {% if summary %}
+      <h2 class="section-title">Summary</h2>
+      <div class="section-content summary-text">
+        <p>{{ summary | replace('\n', '<br />') | safe }}</p>
+      </div>
+      {% endif %}
+
+      <!-- Education -->
+      {% if education and education|length > 0 %}
+      <h2 class="section-title">Education</h2>
+      <div class="section-content">
+        {% for edu in education %}
+        <div class="entry-item">
+          <div class="entry-line1">
+            <span>{{ edu.institute_name }}</span>
+            <span>{{ edu.year }}</span>
+          </div>
+          <div class="entry-line2">
+            <span>{{ edu.qualification }} {{edu.specialization}}</span>
+            <span>{{ edu.location }}</span>
+          </div>
+          {% if edu.details %}
+          <ul class="entry-description">
+            <li>{{ edu.details }}</li>
+          </ul>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <!-- Experience -->
+      {% if experience and experience|length > 0 %}
+      <h2 class="section-title">Experience</h2>
+      <div class="section-content">
+        {% for exp in experience %}
+        <div class="entry-item">
+          <div class="entry-line1">
+            <span>{{ exp.company }}</span>
+            <span>{{ exp.year }}</span>
+          </div>
+          <div class="entry-line2">
+            <span>{{ exp.title }}</span>
+            <span>{{ exp.location }}</span>
+          </div>
+          {% if exp.description %}
+          <ul class="entry-description">
+            {% for line in exp.description.split('\n') %}
+              {% set trimmed_line = line.strip() %}
+              {% if trimmed_line %}
+                <li>{{ trimmed_line }}</li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <!-- Projects -->
+      {% if projects and projects|length > 0 %}
+      <h2 class="section-title">Projects</h2>
+      <div class="section-content">
+        {% for proj in projects %}
+        <div class="entry-item">
+          <div class="entry-line1">
+            <span>
+              {% if proj.link %}<a href="{{ proj.link }}" target="_blank">{% endif %}
+              {{ proj.project_name }}
+              {% if proj.link %}</a>{% endif %}
+              {% if proj.tech and proj.tech|length > 0 %}
+                <span style="font-weight: normal; font-style: italic; font-size: 0.9em;"> ({{ proj.tech|join(', ') }})</span>
+              {% endif %}
+            </span>
+            <span>{{ proj.dates }}</span> {# Assuming proj.dates exists #}
+          </div>
+          {% if proj.description %}
+          <ul class="entry-description">
+              {% for line in proj.description.split('\n') %}
+                  {% set trimmed_line = line.strip() %}
+                  {% if trimmed_line %}
+                      <li>{{ trimmed_line }}</li>
+                  {% endif %}
+              {% endfor %}
+          </ul>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <!-- Skills -->
+      {% if skills %}
+      <h2 class="section-title">Skills</h2>
+      <div class="section-content">
+        <ul class="simple-list">
+          {% for skill in skills.split(',') %}
+            {% set trimmed_skill = skill.strip() %}
+            {% if trimmed_skill %}
+              <li>{{ trimmed_skill }}</li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      <!-- Languages -->
+      {% if languages %}
+      <h2 class="section-title">Languages</h2>
+      <div class="section-content">
+        <ul class="simple-list">
+          {% for lang in languages.split(',') %}
+            {% set trimmed_lang = lang.strip() %}
+            {% if trimmed_lang %}
+              <li>{{ trimmed_lang }}</li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      <!-- Interests -->
+      {% if interests %}
+      <h2 class="section-title">Interests</h2>
+      <div class="section-content">
+        <ul class="simple-list">
+          {% for interest in interests.split(',') %}
+            {% set trimmed_interest = interest.strip() %}
+            {% if trimmed_interest %}
+              <li>{{ trimmed_interest }}</li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      <!-- Awards -->
+      {% if awards and awards|length > 0 %}
+      <h2 class="section-title">Awards & Honors</h2>
+      <div class="section-content">
+        {% for award in awards %}
+        <div class="entry-item">
+          <div class="entry-line1">
+            <span>{{ award.title }}</span>
+            <span>{{ award.year }}</span>
+          </div>
+          {% if award.issuer %}
+          <div class="entry-line2">
+            <span>{{ award.issuer }}</span>
+            <span></span>
+          </div>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div> <!-- /#resume-output -->
   </body>
 </html>

@@ -35,7 +35,7 @@
         /* Education Specific */
         .edu-right-col-content { display: flex; justify-content: space-between; align-items: flex-start; }
         .edu-right-col-left { flex: 1; padding-right: 10px; }
-        .edu-right-col-right { flex: 0 0 45%; text-align: left; }
+        .edu-right-col-right { flex: 0 0 45%; text-align: left; } /* Changed from fixed width to percentage */
         .edu-institution { font-weight: bold; font-size: 1.0em; color: #000; display: block; }
         .edu-location { font-size: 0.95em; display: block; margin-top: 1px; }
         .edu-degree { font-size: 0.95em; display: block; margin-top: 0px; font-weight: normal; }
@@ -54,12 +54,117 @@
 
         /* Simple String Sections (Skills, Languages, Interests) */
         .string-section .section-content { font-size: 0.95em; color: #222; line-height: 1.4; }
+        .string-section p { margin-bottom: 0; } /* Ensure p tags in string sections don't add extra margin */
+
 
         /* Additional Information Section */
         .additional-info .info-item { display: flex; align-items: flex-start; margin-bottom: 6px; line-height: 1.3; page-break-inside: avoid; }
         .additional-info .info-label { flex: 0 0 1.1in; padding-right: 10px; font-weight: bold; font-size: 1.0em; color: #000; }
         .additional-info .info-value { flex: 1; font-size: 0.95em; color: #222; }
         .additional-info .info-value p { margin: 0; padding: 0; line-height: 1.3; margin-bottom: 1px; } /* For achievement lines */
+
+        /* --- Mobile Responsive Adjustments --- */
+        @media (max-width: 600px) {
+            body {
+                font-size: 9.5pt; /* Slightly reduce base font for mobile */
+                line-height: 1.4;
+            }
+            .resume-container {
+                padding: 20px 15px; /* Use px for more predictable mobile padding */
+                min-height: auto;
+                max-width: 100%;
+            }
+
+            .header-name {
+                font-size: 1.5em; /* Adjust relative to new body font */
+                margin-bottom: 8px;
+            }
+            .header-contact {
+                font-size: 0.95em; /* Adjust relative to new body font */
+                line-height: 1.5; /* Allow more space for wrapped items */
+            }
+            .header-contact span {
+                 white-space: normal; /* Allow contact items to wrap if needed */
+            }
+
+            .section-title {
+                font-size: 1.05em; /* Adjust relative to new body font */
+                margin-top: 12px;
+                margin-bottom: 8px;
+            }
+
+            /* Two-Column Layout becomes Single Column */
+            .two-col-section .entry-item {
+                flex-direction: column; /* Stack left and right columns */
+                margin-bottom: 12px;
+            }
+            .two-col-section .left-col {
+                flex-basis: auto; /* Allow it to take natural height */
+                width: 100%;      /* Take full width */
+                padding-right: 0;
+                margin-bottom: 3px; /* Space between date and main content */
+                font-size: 0.9em;   /* Make date slightly smaller */
+            }
+            .two-col-section .right-col {
+                width: 100%;
+            }
+
+            /* Education Specific Mobile Adjustments */
+            .edu-right-col-content {
+                flex-direction: column; /* Stack institution/location and degree/details */
+                align-items: flex-start;
+            }
+            .edu-right-col-left {
+                padding-right: 0;
+                margin-bottom: 3px; /* Space before degree info */
+                width: 100%;
+            }
+            .edu-right-col-right {
+                flex-basis: auto;
+                width: 100%;
+                text-align: left;
+            }
+            .edu-institution, .edu-degree {
+                 font-size: 1.0em; /* Ensure these stand out a bit */
+            }
+
+
+            /* Experience / Project Specific Mobile Adjustments */
+            .item-line-1 {
+                flex-direction: column; /* Stack item name and location/link */
+                align-items: flex-start;
+            }
+            .item-location {
+                text-align: left;
+                padding-left: 0;
+                margin-top: 2px; /* Space if it wraps below name */
+                font-size: 0.95em;
+            }
+            .item-title {
+                 font-size: 1.0em;
+                 margin-bottom: 5px;
+            }
+            .item-bullets {
+                margin-left: 15px; /* Slightly reduce bullet indent */
+                font-size: 0.95em;
+            }
+
+            /* Additional Information Mobile Adjustments */
+            .additional-info .info-item {
+                flex-direction: column; /* Stack label and value */
+                align-items: flex-start;
+                margin-bottom: 8px;
+            }
+            .additional-info .info-label {
+                flex-basis: auto;
+                padding-right: 0;
+                margin-bottom: 2px; /* Space between label and value */
+                font-size: 1.0em;
+            }
+            .additional-info .info-value {
+                font-size: 0.95em;
+            }
+        }
 
     </style>
 </head>
@@ -68,269 +173,146 @@
     <div class="resume-container">
 
         <!-- Header -->
-
         {% if name %}<div class="header-name">{{ name }}</div>{% endif %}
-
         <div class="header-contact">
-
             {% set contact_items = [] %}
-
-            {% if email %}        {% set _ = contact_items.append('e-mail: ' ~ email) %}{% endif %}
-
+            {% if email %}        {% set _ = contact_items.append('e-mail: <a href="mailto:' ~ email ~ '">' ~ email ~ '</a>') %}{% endif %}
             {% if phone %}        {% set _ = contact_items.append('tel: ' ~ phone) %}{% endif %}
-
             {% if linkedin %}     {% set _ = contact_items.append('<a href="' ~ linkedin ~ '" target="_blank">LinkedIn</a>') %}{% endif %}
-
             {% if github %}       {% set _ = contact_items.append('<a href="' ~ github ~ '" target="_blank">GitHub</a>') %}{% endif %}
-
             {% if portfolio %}    {% set _ = contact_items.append('<a href="' ~ portfolio ~ '" target="_blank">Portfolio</a>') %}{% endif %}
-
             {% for item in contact_items %}
-
                 <span>{{ item | safe }}</span>{% if not loop.last %}<span class="separator">|</span>{% endif %}
-
             {% endfor %}
-
         </div>
 
 
         <!-- Summary -->
-
         {% if summary %}
-
         <div class="section-title">SUMMARY</div>
-
         <div class="section-content summary-text">
-
             <p>{{ summary | replace('\n', '<br>') | safe }}</p>
-
         </div>
-
         {% endif %}
 
 
         <!-- Education -->
-
         {% if education and education|length > 0 %}
-
         <div class="section-title">Education and Qualifications</div>
-
         <div class="section-content two-col-section">
-
             {% for edu in education %}
-
             <div class="entry-item">
-
                 <div class="left-col">{{ edu.year }}</div>
-
                 <div class="right-col">
-
                     <div class="edu-right-col-content">
-
                         <div class="edu-right-col-left">
-
                             <span class="edu-institution">{{ edu.institute_name }}</span>
-
                             {% if edu.location %}<span class="edu-location">{{ edu.location }}</span>{% endif %}
-
                         </div>
-
                         <div class="edu-right-col-right">
-
                             <span class="edu-degree">{{ edu.qualification }} {{ edu.specialization }}</span>
-
                             {% if edu.details %}<span class="edu-details">{{ edu.details }}</span>{% endif %}
-
                         </div>
-
                     </div>
-
                 </div>
-
             </div>
-
             {% endfor %}
-
         </div>
-
         {% endif %}
 
 
         <!-- Experience -->
-
         {% if experience and experience|length > 0 %}
-
         <div class="section-title">Work Experience</div>
-
         <div class="section-content two-col-section">
-
             {% for exp in experience %}
-
             <div class="entry-item">
-
                 <div class="left-col">{{ exp.year }}</div>
-
                 <div class="right-col">
-
                     <div class="item-line-1">
-
                         <span class="item-name">{{ exp.company }}</span>
-
                         {% if exp.location %}<span class="item-location">{{ exp.location }}</span>{% endif %}
-
                     </div>
-
                     {% if exp.title %}<span class="item-title">{{ exp.title }}</span>{% endif %}
-
                     {% if exp.description %}
-
                     <ul class="item-bullets">
-
                         <li>{{ exp.description }}</li>
-
                     </ul>
-
                     {% endif %}
-
                 </div>
-
             </div>
-
             {% endfor %}
-
         </div>
-
         {% endif %}
 
 
         <!-- Projects -->
-
         {% if projects and projects|length > 0 %}
-
         <div class="section-title">PROJECTS</div>
-
         <div class="section-content two-col-section">
-
             {% for proj in projects %}
-
             <div class="entry-item">
-
-                <div class="left-col"></div>
-
+                <div class="left-col">{% if proj.year %}{{ proj.year }}{% endif %}</div> {# Added year to project's left col if available #}
                 <div class="right-col">
-
                     <div class="item-line-1">
-
                         <span class="item-name">{{ proj.project_name }}</span>
-
                         {% if proj.link %}<span class="item-location"><a href="{{ proj.link }}" target="_blank">[Link]</a></span>{% endif %}
-
                     </div>
-
                     {% if proj.title %}<span class="item-title">{{ proj.title }}</span>{% endif %}
-
                     {% if proj.tech and proj.tech|length > 0 %}
-
                     <span class="item-title">Technologies: {{ proj.tech|join(', ') }}</span>
-
                     {% endif %}
-
                     {% if proj.description %}
-
-                    <ul class="item-bullets">
-
-                        <li>{{ proj.description }}</li>
-
-                    </ul>
-
+                     {# Changed to paragraph for potentially longer descriptions without bullets #}
+                    <p class="item-description-paragraph">{{ proj.description }}</p>
                     {% endif %}
-
                 </div>
-
             </div>
-
             {% endfor %}
-
         </div>
-
         {% endif %}
 
 
         <!-- Skills -->
-
         {% if skills %}
-
         <div class="section-title">SKILLS</div>
-
         <div class="section-content string-section">
-
             <p>{{ skills }}</p>
-
         </div>
-
         {% endif %}
 
 
         <!-- Additional Information -->
-
         {% if interests or awards or languages %}
-
         <div class="section-title">Additional Information</div>
-
         <div class="section-content additional-info">
-
             {% if interests %}
-
             <div class="info-item">
-
                 <div class="info-label">Interests:</div>
-
                 <div class="info-value">{{ interests }}</div>
-
             </div>
-
             {% endif %}
-
 
             {% if awards %}
-
             <div class="info-item">
-
                 <div class="info-label">Achievements:</div>
-
                 <div class="info-value">
-
                     {% for award in awards %}
-
                     <p>{{ award.title }}{% if award.issuer %} - {{ award.issuer }}{% endif %}{% if award.year %} ({{ award.year }}){% endif %}</p>
-
                     {% endfor %}
-
                 </div>
-
             </div>
-
             {% endif %}
-
 
             {% if languages %}
-
             <div class="info-item">
-
                 <div class="info-label">Languages:</div>
-
                 <div class="info-value">{{ languages }}</div>
-
             </div>
-
             {% endif %}
-
         </div>
-
         {% endif %}
 
-
     </div>
-
 </body>
 </html>

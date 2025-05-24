@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Using the name variable in the title -->
+    <title>{{ name }}'s Resume</title>
+    <style>
+        body {
+            font-family: Georgia, 'Times New Roman', Times, serif; /* Common serif font */
+            font-size: 11pt; /* Typical resume font size */
+            line-height: 1.4;
+            margin: 0;
+            padding: 0;
+            background-color: #fff; /* White background */
+            color: #000; /* Black text */
+        }
+        .resume-container {
+            max-width: 8.5in; /* Standard US Letter width */
+            min-height: 11in; /* Standard US Letter height */
+            margin: 20px auto; /* Center on page with some margin */
+            padding: 0.8in 0.8in; /* Typical resume margins */
+            box-sizing: border-box; /* Include padding in width/height */
+            background-color: #fff;
+        }
+
+        /* --- Header --- */
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #000; /* Line below header */
+        }
+        .header h1.name {
+            font-size: 18pt; /* Larger font size for name */
+            font-weight: bold;
+            margin: 0 0 5px 0;
+            letter-spacing: 1px; /* Slight letter spacing */
+            word-break: break-word;
+        }
+        .header .contact-info {
+            font-size: 10pt;
+            line-height: 1.5; /* Added for better spacing if items wrap */
+        }
+        .header .contact-info span {
+            margin: 0 5px;
+            /* white-space: nowrap; /* Original, can cause overflow on mobile */
+        }
+         /* Separator for contact info */
+        .header .contact-info span:not(:last-child)::after {
+            content: "|";
+            margin-left: 10px;
+            color: #555;
+        }
+
+        /* --- Two Column Layout --- */
+        .section {
+            display: flex;
+            margin-bottom: 12px; /* Space between sections */
+            page-break-inside: avoid;
+        }
+        .section-title {
+            flex: 0 0 1.5in; /* Width of the left column (adjust as needed) */
+            padding-right: 15px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 11pt;
+            padding-top: 1px; /* Align title slightly better with first line of content */
+            text-align: right; /* Align title text to the right of its column */
+            color: #333;
+            word-break: break-word; /* Allow long titles to wrap */
+        }
+        .section-content {
+            flex: 1 1 auto; /* Content takes remaining space */
+            min-width: 0; /* Important for flex items to allow them to shrink and wrap content */
+        }
+
+        /* --- Content Styling --- */
+        .entry {
+            margin-bottom: 10px; /* Space between entries in a section */
+            page-break-inside: avoid;
+        }
+        .entry-line {
+            display: flex;
+            justify-content: space-between; /* Space between left and right parts */
+            margin-bottom: 1px;
+            /* flex-wrap: wrap; /* Optionally allow .left and .right to wrap onto new lines relative to each other if very cramped */
+        }
+        .entry-line .left {
+            text-align: left;
+            padding-right: 5px; /* Add some space if right content wraps close */
+            word-break: break-word; /* Allow content to wrap */
+            min-width: 0; /* Allow shrinking */
+        }
+        .entry-line .right {
+            text-align: right;
+            padding-left: 5px; /* Add some space if left content wraps close */
+            word-break: break-word; /* Allow content to wrap */
+            flex-shrink: 0; /* Try to prevent date/location from shrinking too much initially */
+            white-space: nowrap; /* If dates/locations are short and should not wrap */
+        }
+        .entry-line .bold {
+            font-weight: bold;
+        }
+        .entry-line .italic {
+            font-style: italic;
+        }
+        .entry-details,
+        .entry-description {
+            margin-top: 3px;
+            padding-left: 15px; /* Indentation for details/description */
+            font-size: 10.5pt; /* Slightly smaller for descriptions */
+            color: #333;
+            word-break: break-word;
+        }
+         .entry-description ul {
+            margin: 0;
+            padding-left: 1.2em; /* Indent bullet points */
+            list-style: disc;
+         }
+         .entry-description ul li {
+             margin-bottom: 2px;
+         }
+
+        /* --- Simple Lists (Skills, Languages, Interests) --- */
+        .simple-list {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+        .simple-list li {
+            margin-bottom: 2px;
+            word-break: break-word;
+        }
+        .skills-list {
+            line-height: 1.5; /* Allow space for wrapped skill lines */
+        }
+        .skills-list span {
+             display: inline; /* Allow wrapping with commas */
+             margin-right: 0px; /* Comma will provide space */
+        }
+         .skills-list span:not(:last-child)::after {
+             content: ", "; /* Commas with space between skills */
+         }
+         /* To prevent a trailing comma if it's the last visible item */
+         .skills-list span:last-of-type::after {
+             content: "";
+         }
+
+
+        /* --- Activities / Honors Specific --- */
+         .activity-item, .honor-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2px;
+         }
+          .activity-item span:first-child, .honor-item span:first-child {
+            text-align: left;
+            flex-grow: 1; /* Allow item name to take more space */
+            padding-right: 10px; /* Space before date */
+            word-break: break-word;
+            min-width: 0;
+         }
+         .activity-item span:last-child, .honor-item span:last-child {
+            text-align: right;
+            font-style: italic; /* Dates italicized */
+            flex-shrink: 0; /* Prevent date from shrinking */
+            white-space: nowrap; /* Keep dates on one line */
+         }
+
+        a {
+            color: #000;
+            text-decoration: none;
+            word-break: break-all; /* For long URLs */
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* --- Print Optimizations --- */
+        @media print {
+            body { background-color: #fff; font-size: 10.5pt; }
+            .resume-container { box-shadow: none; margin: 0; padding: 0.5in; border: none; max-width: 100%; min-height: auto; }
+        }
+
+
+        /* --- Mobile Responsive Adjustments (More Conservative) --- */
+        @media (max-width: 768px) {
+            body {
+                font-size: 11.5pt; /* Slightly increased base font for mobile */
+                -webkit-text-size-adjust: 100%;
+                text-size-adjust: 100%;
+            }
+            .resume-container {
+                padding: 0.6in 0.4in; /* Moderately reduced padding */
+                margin: 10px auto;
+                min-height: auto;
+                max-width: 100%;
+            }
+
+            /* Header */
+            .header h1.name {
+                font-size: 16pt; /* Adjust name size */
+            }
+            .header .contact-info {
+                font-size: 9.5pt; /* Adjust contact info size */
+            }
+            .header .contact-info span {
+                 display: inline-block; /* Allows margin and respects line breaks better for wrapped items */
+                 margin: 2px 3px;
+                 white-space: normal; /* Allow individual contact items to wrap */
+            }
+            .header .contact-info span:not(:last-child)::after {
+                content: ""; /* Remove pipe separators on mobile, as they'll look messy with wrapping */
+                margin-left: 0;
+            }
+
+            /* Section Layout - Keep flex row, adjust widths and alignment */
+            .section-title {
+                flex: 0 0 1in; /* Further reduce width of the left title column */
+                /* Or use percentage: flex: 0 0 28%; */
+                padding-right: 10px;
+                font-size: 10.5pt; /* Match body or slightly smaller */
+                text-align: left; /* Change title alignment to left for better use of narrow column */
+                padding-top: 0;
+            }
+            .section-content {
+                font-size: 10pt; /* Adjust content font if needed */
+            }
+
+
+            /* Content Styling - Focus on internal wrapping */
+            .entry-line .right {
+                white-space: normal; /* Allow dates/locations to wrap if necessary */
+                flex-shrink: 1; /* Allow it to shrink more readily if .left is long */
+            }
+            .entry-details,
+            .entry-description {
+                padding-left: 8px; /* Slightly reduce indentation */
+                font-size: 10pt;
+            }
+             .entry-description ul {
+                padding-left: 1em; /* Reduce bullet indent */
+             }
+
+            /* Activities / Honors Specific - Allow date to wrap */
+             .activity-item span:last-child, .honor-item span:last-child {
+                 white-space: normal; /* Allow dates to wrap if name is long */
+                 flex-shrink: 1;
+             }
+        }
+
+        @media (max-width: 480px) { /* Fine-tuning for very small screens */
+            body {
+                font-size: 11pt;
+            }
+            .resume-container {
+                padding: 0.5in 0.25in;
+            }
+            .header h1.name {
+                font-size: 15pt;
+            }
+            .header .contact-info {
+                font-size: 9pt;
+            }
+             .header .contact-info span {
+                 margin: 1px 2px;
+             }
+
+            .section-title {
+                flex: 0 0 0.8in; /* Even narrower title column */
+                /* Or use percentage: flex: 0 0 25%; */
+                font-size: 10pt;
+                padding-right: 8px;
+            }
+            .section-content {
+                font-size: 9.5pt;
+            }
+
+            .entry-details,
+            .entry-description {
+                padding-left: 5px;
+                font-size: 9.5pt;
+            }
+            .entry-description ul {
+                padding-left: 0.9em;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="resume-container">
+        <!-- Header -->
+        <div class="header">
+            {% if name %}<h1 class="name">{{ name | upper }}</h1>{% endif %}
+            <div class="contact-info">
+                {% if email %}<span>Email: <a href="mailto:{{ email }}">{{ email }}</a></span>{% endif %}
+                {% if phone %}<span>Cell: {{ phone }}</span>{% endif %}
+                {% if location %}<span>{{ location }}</span>{% endif %}
+                {% if linkedin %}<span><a href="{{ linkedin }}" target="_blank">LinkedIn</a></span>{% endif %}
+                {% if github %}<span><a href="{{ github }}" target="_blank">GitHub</a></span>{% endif %}
+                {% if portfolio %}<span><a href="{{ portfolio }}" target="_blank">Portfolio</a></span>{% endif %}
+            </div>
+        </div>
+
+        <!-- Summary (Optional - Not in image, but keeping structure) -->
+        {% if summary %}
+        <div class="section">
+            <div class="section-title">Summary</div>
+            <div class="section-content">
+                <div class="entry-description">{{ summary | replace('\n', '<br />') | safe }}</div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Education -->
+        {% if education and education|length > 0 %}
+        <div class="section">
+            <div class="section-title">Education</div>
+            <div class="section-content">
+                {% for edu in education %}
+                <div class="entry">
+                    <div class="entry-line">
+                        <span class="left bold">{{ edu.institute_name }}</span>
+                        <span class="right bold">{{ edu.location }}</span>
+                    </div>
+                    <div class="entry-line">
+                        <span class="left italic">{{ edu.qualification }}{% if edu.specialization %} in {{ edu.specialization }}{% endif %}</span>
+                        <span class="right italic">{{ edu.year }}</span>
+                    </div>
+                    {% if edu.details %}
+                    <div class="entry-details">{{ edu.details }}</div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Projects -->
+        {% if projects and projects|length > 0 %}
+        <div class="section">
+            <div class="section-title">Projects</div>
+            <div class="section-content">
+                {% for proj in projects %}
+                <div class="entry">
+                    <div class="entry-line">
+                         <span class="left bold">
+                            {% if proj.link %}<a href="{{ proj.link }}" target="_blank">{% endif %}
+                            {{ proj.project_name }}
+                            {% if proj.link %}</a>{% endif %}
+                         </span>
+                         <!-- Assumes proj.year exists in your data -->
+                         {% if proj.year %}<span class="right italic">{{ proj.year }}</span>{% endif %}
+                    </div>
+                     {% if proj.title %} <!-- Display project title if exists -->
+                     <div class="entry-line">
+                         <span class="left italic">{{ proj.title }}</span>
+                     </div>
+                     {% endif %}
+                     {% if proj.tech %} <!-- Display tech stack if exists -->
+                     <div class="entry-details">
+                         Technologies: {{ proj.tech|join(', ') }}
+                     </div>
+                     {% endif %}
+                    {% if proj.description %}
+                    <div class="entry-description">
+                         <!-- Assuming description is bullet points or paragraphs -->
+                         {{ proj.description | replace('\n', '<br/>') | safe }}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Experience -->
+        {% if experience and experience|length > 0 %}
+        <div class="section">
+            <div class="section-title">Work Experience</div>
+            <div class="section-content">
+                {% for exp in experience %}
+                <div class="entry">
+                    <div class="entry-line">
+                        <span class="left bold">{{ exp.company }}</span>
+                        <span class="right bold">{{ exp.location }}</span>
+                    </div>
+                    <div class="entry-line">
+                        <span class="left italic">{{ exp.title }}</span>
+                        <span class="right italic">{{ exp.year }}</span>
+                    </div>
+                    {% if exp.description %}
+                    <div class="entry-description">
+                         <!-- Assuming description is bullet points or paragraphs -->
+                         {{ exp.description | replace('\n', '<br/>') | safe }}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Leadership (New Section - requires 'leadership' data) -->
+        {% if leadership and leadership|length > 0 %}
+        <div class="section">
+            <div class="section-title">Leadership</div>
+            <div class="section-content">
+                {% for lead in leadership %}
+                <div class="entry">
+                    <div class="entry-line">
+                        <!-- Assuming similar structure to experience -->
+                        <span class="left bold">{{ lead.organization or lead.company }}</span>
+                        <span class="right bold">{{ lead.location }}</span>
+                    </div>
+                    <div class="entry-line">
+                        <span class="left italic">{{ lead.title }}</span>
+                        <span class="right italic">{{ lead.year }}</span>
+                    </div>
+                    {% if lead.description %}
+                    <div class="entry-description">
+                         {{ lead.description | replace('\n', '<br/>') | safe }}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Skills -->
+        {% if skills %}
+        <div class="section">
+            <div class="section-title">Skills</div>
+            <div class="section-content">
+                 <div class="skills-list">
+                    {% for skill in skills.split(',') %}
+                        {% if skill.strip() %}<span>{{ skill.strip() }}</span>{% endif %}
+                    {% endfor %}
+                 </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Activities (New Section - requires 'activities' data) -->
+        {% if activities and activities|length > 0 %}
+        <div class="section">
+            <div class="section-title">Activities</div>
+            <div class="section-content">
+                 {% for activity in activities %}
+                     <div class="activity-item">
+                         <!-- Assuming activity is a dict with 'name' and 'year' -->
+                         <span>{{ activity.name }}</span>
+                         {% if activity.year %}<span>{{ activity.year }}</span>{% endif %}
+                     </div>
+                 {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Honors (Using 'awards' data) -->
+        {% if awards and awards|length > 0 %}
+        <div class="section">
+            <div class="section-title">Honors</div>
+            <div class="section-content">
+                {% for award in awards %}
+                    <div class="honor-item">
+                         <span>
+                             {{ award.title }}
+                             {% if award.issuer %} ({{ award.issuer }}){% endif %}
+                        </span>
+                         {% if award.year %}<span>{{ award.year }}</span>{% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Languages (Optional - Not prominent in image, but keeping structure) -->
+        {% if languages %}
+        <div class="section">
+            <div class="section-title">Languages</div>
+            <div class="section-content">
+                 <ul class="simple-list">
+                    {% for language in languages.split(',') %}
+                       {% if language.strip() %}<li>{{ language.strip() }}</li>{% endif %}
+                    {% endfor %}
+                 </ul>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Interests (Optional - Not in image, but keeping structure) -->
+        {% if interests %}
+        <div class="section">
+            <div class="section-title">Interests</div>
+            <div class="section-content">
+                 <ul class="simple-list">
+                    {% for interest in interests.split(',') %}
+                        {% if interest.strip() %}<li>{{ interest.strip() }}</li>{% endif %}
+                    {% endfor %}
+                 </ul>
+            </div>
+        </div>
+        {% endif %}
+
+    </div><!-- /.resume-container -->
+</body>
+</html>

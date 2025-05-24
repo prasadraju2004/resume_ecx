@@ -197,18 +197,21 @@
             justify-content: space-between;
             align-items: flex-start;
             margin-bottom: 2px;
+            flex-wrap: wrap; /* Allow wrapping for name and link */
         }
         .item-name {
             font-weight: bold;
             font-size: 11pt; /* Match entry-line-1 */
             color: #000;
+            flex-grow: 1; /* Allow name to take space */
+            padding-right: 10px; /* Space before link if on same line */
         }
         .item-location { /* Used for the [Link] */
             font-size: 0.9em; /* Slightly smaller link */
             text-align: right;
             color: #444; /* Link color */
             flex-shrink: 0;
-            padding-left: 10px;
+            /* padding-left: 10px; */ /* Removed, handled by item-name padding-right or stacking */
         }
         .item-location a {
             color: inherit;
@@ -256,6 +259,156 @@
             margin-bottom: 5px; /* Space between award items */
             font-size: 10.5pt; /* Match body font size */
             line-height: 1.3;
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            body {
+                font-size: 10.5pt;
+                line-height: 1.45;
+            }
+            .cv-container {
+                margin: 0.5in auto;
+                padding: 0 0.25in; /* Reduce side padding */
+                min-height: 0; /* Allow shrinking */
+            }
+            .header-name {
+                font-size: 14pt;
+                margin-bottom: 6px;
+            }
+            .header-contact p {
+                font-size: 10pt;
+            }
+            .cv-section-title {
+                font-size: 11pt;
+                margin-top: 15px;
+                margin-bottom: 10px;
+            }
+            .cv-entry {
+                margin-bottom: 12px;
+            }
+
+            /* General Entry Lines (non-flex) */
+            .entry-line-1, .entry-line-2, .entry-dates,
+            .entry-title, .entry-subtitle, .course-info {
+                font-size: 10pt;
+            }
+            .entry-detail, .entry-sub-detail, p.entry-detail {
+                margin-left: 10px; /* Reduce indent */
+                font-size: 10pt;
+                margin-top: 3px;
+            }
+            .entry-sub-detail {
+                margin-left: 20px; /* Reduce further indent */
+            }
+
+            /* Bullet Lists */
+            .bullet-list, .item-bullets {
+                margin-left: 10px; /* Reduce indent */
+                font-size: 10pt;
+            }
+            .bullet-list li, .item-bullets li {
+                padding-left: 15px; /* Adjust space for bullet */
+            }
+             /* Research interests simple paragraph */
+            section.cv-section > p[style*="margin-left: 0;"] {
+                font-size: 10pt;
+            }
+
+            /* Teaching Experience Flex Layout */
+            .line-wrapper {
+                /* flex-direction: column; Implicitly handled by flex-wrap when space is tight */
+                /* align-items: flex-start; */
+            }
+            .line-left-content {
+                padding-right: 0; /* Remove padding when stacking might occur */
+                width: 100%; /* Ensure it takes full width if right content wraps */
+            }
+            .line-right-content {
+                text-align: left; /* Align to left when stacked */
+                white-space: normal; /* Allow wrapping */
+                padding-left: 0;
+                margin-top: 3px; /* Add space when stacked */
+                width: 100%; /* Take full width when stacked */
+                font-size: 10pt;
+            }
+            .line-right-content br { /* Hide line breaks if we are stacking them anyway */
+                /* display: none; */
+            }
+
+
+            /* Projects Section */
+            .item-line-1 {
+                /* flex-direction: column; This is handled by flex-wrap */
+                /* align-items: flex-start; */
+            }
+            .item-name {
+                font-size: 10.5pt;
+                width: 100%; /* Ensure name takes full width if link wraps */
+                padding-right: 0;
+            }
+            .item-location { /* Project link */
+                text-align: left; /* Align link to left when stacked */
+                margin-top: 2px;
+                font-size: 0.85em;
+                width: 100%;
+            }
+            .item-title {
+                font-size: 10pt;
+            }
+
+            /* Publications */
+            .publication-entry, .publication-entry span, .publication-entry a {
+                font-size: 10pt;
+            }
+
+            /* Awards & Honors */
+            .awards-certs-section {
+                padding-left: 10px; /* Reduce indent */
+            }
+            .awards-certs-item {
+                font-size: 10pt;
+            }
+
+            /* References */
+            .reference-entry {
+                padding-left: 0; /* No indent for references on mobile */
+                font-size: 10pt;
+            }
+            .reference-entry p {
+                font-size: 10pt;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                font-size: 9.5pt;
+            }
+            .cv-container {
+                padding: 0 0.15in;
+                margin: 0.3in auto;
+            }
+            .header-name { font-size: 13pt; }
+            .header-contact p { font-size: 9.5pt; }
+            .cv-section-title { font-size: 10pt; margin-bottom: 8px;}
+
+            .entry-line-1, .entry-line-2, .entry-dates,
+            .entry-title, .entry-subtitle, .course-info,
+            .entry-detail, .entry-sub-detail, p.entry-detail,
+            .bullet-list, .item-bullets,
+            .publication-entry, .publication-entry span, .publication-entry a,
+            .awards-certs-item, .reference-entry, .reference-entry p,
+            .item-name, .item-title {
+                font-size: 9.5pt;
+            }
+            .bullet-list li, .item-bullets li {
+                padding-left: 12px;
+            }
+            .entry-detail, .entry-sub-detail, .bullet-list, .item-bullets, p.entry-detail {
+                 margin-left: 5px;
+            }
+            .entry-sub-detail { margin-left: 10px; }
+            .awards-certs-section { padding-left: 5px; }
         }
 
     </style>
@@ -384,7 +537,7 @@
               {% endif %}
             </div>
             <div class="line-right-content">
-              {% if exp.location %}{{ exp.location }}<br />{% endif %} {{ exp.year | default('Year') }}
+              {% if exp.location %}{{ exp.location }}{% if exp.year %}<br />{% endif %}{% endif %}{{ exp.year | default('Year') }}
             </div>
           </div>
           {% if exp.description %}
@@ -521,7 +674,7 @@
                 {% if display_authors is string %} {# Proceed only if it's a string #}
                     {% set author_parts = display_authors.split(',', 1) %} {# Split only at the first comma #}
                     {# Check if the first part starts with "User " #}
-                    {% if author_parts[0].strip().startswith('User ') %}
+                    {% if author_parts[0].strip().lower().startswith(name|lower if name else '___nevermatch___') or author_parts[0].strip().lower().startswith('user ') %}
                         {# Construct the new authors string: name + rest #}
                         {% set display_authors = name ~ (', ' ~ author_parts[1].strip() if author_parts|length > 1 else '') %}
                     {% endif %}
